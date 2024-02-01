@@ -1,0 +1,9 @@
+# ninja log v5
+0	233	1706618278280039569	CMakeFiles/altairInterview.dir/main.cpp.o	47d37b0a44b6a210
+234	298	1706618278344039732	altairInterview	44e53a0ed9b4a0b1
+1	333	1706821177199558831	CMakeFiles/altairInterview.dir/NodeCloud.cpp.o	3b92a9646884bab9
+1	370	1706821177235558813	CMakeFiles/altairInterview.dir/Node.cpp.o	1820ab88a27de190
+1	428	1706821211831542271	CMakeFiles/altairInterview.dir/NodeCloud2D.cpp.o	284408b75a6be25e
+1	504	1706821211907542237	CMakeFiles/altairInterview.dir/main.cpp.o	47d37b0a44b6a210
+1	648	1706821212051542173	CMakeFiles/altairInterview.dir/NodeCloudFactory.cpp.o	77c04ecbd7b0f27a
+648	729	1706821212131542138	altairInterview	c97fdaece21335a2
