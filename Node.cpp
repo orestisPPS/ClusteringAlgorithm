@@ -6,7 +6,7 @@
 
 Node::Node() {
     _coordinates = nullptr;
-    _id = make_shared<unsigned>(-1);
+    _id = nullptr;
 }
 
 Node::~Node() {
@@ -40,6 +40,8 @@ void Node::setCoordinatesVector(shared_ptr<vector<double>> coordinates) {
 
 void Node::setId(unsigned id) {
     if (_id != nullptr)
-        throw runtime_error("Id is already assigned");
+        *_id = id;
+    else
+        _id = make_shared<unsigned>(id);
 }
 

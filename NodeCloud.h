@@ -9,17 +9,13 @@
 #include <map>
 class NodeCloud {
 public:
-    NodeCloud();
+    explicit NodeCloud(shared_ptr<vector<shared_ptr<Node>>> nodesVector);
     
     ~NodeCloud();
     
     
 protected:
-    unsigned _numberOfNodes;
-    
-    unique_ptr<shared_ptr<Node>> _nodesVector;
-    
-    unique_ptr<map<pair<unsigned, unsigned>, unsigned>> _coordinatesToIdMap; 
+    shared_ptr<vector<shared_ptr<Node>>> _nodesVector;
 };
 
 

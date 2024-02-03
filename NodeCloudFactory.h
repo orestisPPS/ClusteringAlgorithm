@@ -8,17 +8,25 @@
 #include "NodeCloud2D.h"
 
 class NodeCloudFactory {
+public:
+    
     NodeCloudFactory();
 
     shared_ptr<NodeCloud2D> createNodeCloud(list<vector<double>> coordinatesList);
 
-    shared_ptr<NodeCloud2D> createNodeCloud2D(unsigned domainLength1, unsigned domainLength2, unsigned numberOfNodes);
+    shared_ptr<NodeCloud2D> createNodeCloud(const map<unsigned short, double>& directionToDomainLength, unsigned numberOfNodes);
     
 private:
     
-    shared_ptr<vector<shared_ptr<Node>>> _initializeRandom2DNodesVector(unsigned domainLength1, unsigned domainLength2, unsigned numberOfNodes);
+    static void _checkInputMap(const map<unsigned short, double>& directionToDomainLength);
     
-    void _sortNodesVector(shared_ptr<vector<shared_ptr<Node>>> nodesVector);
+    shared_ptr<list<shared_ptr<Node>>> _initializeRandomCoordinateNodesList(const map<unsigned short, double>& directionToDomainLength, unsigned numberOfNodes);
+    
+    static void _sortNodesList(const shared_ptr<list<shared_ptr<Node>>>& nodesList, unsigned maximumDirections);
+    
+    static shared_ptr<vector<shared_ptr<Node>>> _covertListToVectorAndAssignID(const shared_ptr<list<shared_ptr<Node>>>& nodesList);
+    
+    
     //Seed the random device to the Mersenne Twister generator
     random_device _randomDevice;
     

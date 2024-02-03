@@ -12,50 +12,73 @@ shared_ptr<NodeCloud2D> NodeCloudFactory::createNodeCloud(list<vector<double>> c
     return shared_ptr<NodeCloud2D>();
 }
 
-shared_ptr<NodeCloud2D> NodeCloudFactory::createNodeCloud2D(unsigned domainLength1, unsigned domainLength2, unsigned int numberOfNodes) {
-    auto nodesVector = _initializeRandom2DNodesVector(domainLength1, domainLength2, numberOfNodes);
+shared_ptr<NodeCloud2D> NodeCloudFactory::createNodeCloud(const map<unsigned short, double>& directionToDomainLength, unsigned numberOfNodes) {
+    _checkInputMap(directionToDomainLength);
+    auto nodesList = _initializeRandomCoordinateNodesList(directionToDomainLength, numberOfNodes);
+    _sortNodesList(nodesList, directionToDomainLength.size());
+    auto nodesVector = _covertListToVectorAndAssignID(nodesList);
+    
+    auto lol = 1;
 }
 
 
-shared_ptr<vector<shared_ptr<Node>>>
-NodeCloudFactory::_initializeRandom2DNodesVector(unsigned int domainLength1, unsigned int domainLength2,
-                                                 unsigned int numberOfNodes) {
-    auto nodesVector = make_shared<vector<shared_ptr<Node>>>(numberOfNodes);
-
+shared_ptr<list<shared_ptr<Node>>>
+NodeCloudFactory::_initializeRandomCoordinateNodesList(const map<unsigned short, double>& directionToDomainLength, unsigned int numberOfNodes) {
     // Create a random device and use it to seed the Mersenne Twister generator
-    std::uniform_real_distribution<double> distribution1(0, domainLength1);
-    std::uniform_real_distribution<double> distribution2(0, domainLength2);
+    auto distributionMap = make_shared<map<unsigned short, uniform_real_distribution<double>>>();
+    for (auto &entry: directionToDomainLength) {
+        (*distributionMap)[entry.first] = uniform_real_distribution<double>(0, entry.second);
+    }
+
+    auto nodesList = make_shared<list<shared_ptr<Node>>>();
 
     for (unsigned i = 0; i < numberOfNodes; i++) {
         auto node = make_shared<Node>();
-        auto nodalCoordinates = make_shared<vector<double>>(2);
-        (*nodalCoordinates)[0] = distribution1(_generator);
-        (*nodalCoordinates)[1] = distribution2(_generator);
+        auto nodalCoordinates = make_shared<vector<double>>(directionToDomainLength.size());
+        for (auto &entry: *distributionMap)
+            (*nodalCoordinates)[entry.first - 1] = entry.second(_generator);
         node->setCoordinatesVector(std::move(nodalCoordinates));
-        (*nodesVector)[i] = std::move(node);
+        nodesList->push_back(std::move(node));
     }
+    return nodesList;
+}
 
-    bool duplicateFound;
-    do {
-        duplicateFound = false;
-        for (size_t i = 0; i < nodesVector->size() - 1; ++i) {
-            const auto& coords1 = *(*nodesVector)[i]->getCoordinatesVector();
-            const auto& coords2 = *(*nodesVector)[i + 1]->getCoordinatesVector();
-            if (coords1 == coords2) {
-                duplicateFound = true;
-                auto newCoordinates = make_shared<vector<double>>(2);
-                (*newCoordinates)[0] = distribution1(_generator);
-                (*newCoordinates)[1] = distribution2(_generator);
-                (*nodesVector)[i + 1]->setCoordinatesVector(std::move(newCoordinates));
-            }
-        }
-    } while (duplicateFound);
+
+
+void NodeCloudFactory::_checkInputMap(const map<unsigned short, double> &directionToDomainLength) {
+    if (directionToDomainLength.size() > 3 || directionToDomainLength.size() < 2)
+        throw runtime_error("Input map should contain 2 or 3 entries for directions 1 and 2 or 3");
+    for (auto& entry : directionToDomainLength) {
+        if (entry.second <= 0)
+            throw runtime_error("Input map should contain positive values for domain lengths");
+        if (entry.first != 1 && entry.first != 2 && entry.first != 3)
+            throw runtime_error("Input map should contain directions 1, 2, or 3");
+    }
+}
+
+void NodeCloudFactory::_sortNodesList(const shared_ptr<list<shared_ptr<Node>>>& nodesList, unsigned maximumDirections) {
     
+    nodesList->sort([maximumDirections](const shared_ptr<Node>& node1, const shared_ptr<Node>& node2) {
+        const auto& coords1 = *node1->getCoordinatesVector();
+        const auto& coords2 = *node2->getCoordinatesVector();
+        for (unsigned i = 0; i < maximumDirections; ++i) {
+            if (coords1[i] < coords2[i])
+                return true;
+            else if (coords1[i] > coords2[i])
+                return false;
+        }
+        return false;
+    });
 }
 
-void NodeCloudFactory::_sortNodesVector(shared_ptr<vector<shared_ptr<Node>>> nodesVector) {
-
+shared_ptr<vector<shared_ptr<Node>>>
+NodeCloudFactory::_covertListToVectorAndAssignID(const shared_ptr<list<shared_ptr<Node>>> &nodesList) {
+    auto nodesVector = make_shared<vector<shared_ptr<Node>>>(nodesList->size());
+    for (unsigned iNode = 0; iNode < nodesVector->size(); ++iNode) {
+        (*nodesVector)[iNode] = std::move(nodesList->front());
+        nodesList->pop_front();
+        (*nodesVector)[iNode]->setId(iNode);
+    }
+    return nodesVector;
 }
-
-
 
