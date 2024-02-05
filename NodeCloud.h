@@ -33,11 +33,11 @@ private:
     unique_ptr<vector<map<double, shared_ptr<Node>>>> _coordinateComponentToNodeMaps;
 
     unique_ptr<vector<map<double, shared_ptr<Node>>>> _initializeCoordinateComponentToNodeMaps();
-
-    //void calculateNodalNeighbours(shared_ptr<node
     
-    
-};
+    void _searchNeighboursRecursively(const shared_ptr<Node> &node, double radius,
+                                      unordered_map<shared_ptr<Node>, bool> &visitedNodes,
+                                      shared_ptr<list<shared_ptr<Node>>> cluster);
+};;
 
 
 #endif //ALTAIRINTERVIEW_NODECLOUD_H

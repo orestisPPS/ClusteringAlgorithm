@@ -8,7 +8,7 @@ int main() {
     //auto cloud2 = factory.createNodeCloud({{4, 4}, {3, 3}, {2, 2}, {1, 1}});
     auto cloud3 = factory.createNodeCloud({{0, 0}, {0.01, 1}, {0.02, 2}, {0.03, 3}, {0.04, 4}});
 
-    cloud3->calculateClusters(2);
+    cloud3->calculateClusters(0.1);
     cout << "That's all folks!" << endl;
     
     return 0;

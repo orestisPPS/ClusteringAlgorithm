@@ -6,7 +6,7 @@
 #include "NodeCloud.h"
 
 NodeCloud::NodeCloud(shared_ptr<vector<shared_ptr<Node>>> nodesVector) {
-    if (_nodes->empty())
+    if (nodesVector->empty())
         throw runtime_error("NodeCloud cannot be created with an empty node vector");
     _nodes = std::move(nodesVector);
     _dimensions = _nodes->at(0)->getCoordinatesVector()->size();
@@ -53,12 +53,38 @@ list<shared_ptr<Node>> NodeCloud::findNeighboursOfNode(const shared_ptr<Node>& n
 }
 
 unsigned NodeCloud::calculateClusters(double radius) {
-    
+
+    auto visitedNodes = make_unique<unordered_map<shared_ptr<Node>, bool>>();
+
     for (auto &thisNode : *_nodes) {
         (*_nodeToNeighbours)[thisNode] = std::move(findNeighboursOfNode(thisNode, radius));
+        visitedNodes->insert({thisNode, false});
     }
-    return 0;
+
+    auto clusterCount = 0;
+
+    for (auto &thisNode : *_nodes) {
+        if (!(*visitedNodes)[thisNode]) {
+            auto cluster = make_shared<list<shared_ptr<Node>>>();
+            _searchNeighboursRecursively(thisNode, radius, *visitedNodes, cluster);
+            clusterCount++;
+        }
+    }
+    return clusterCount;
 }
+
+void NodeCloud::_searchNeighboursRecursively(const shared_ptr<Node> &node, double radius,
+                                             unordered_map<shared_ptr<Node>, bool> &visitedNodes,
+                                             shared_ptr<list<shared_ptr<Node>>> cluster) {
+    visitedNodes[node] = true;
+    cluster->push_back(node);
+    auto &thisNodeNeighbours = (*_nodeToNeighbours)[node];
+    for (auto &neighbour: thisNodeNeighbours)
+        if (!visitedNodes[neighbour])
+            _searchNeighboursRecursively(neighbour, radius, visitedNodes, cluster);
+    
+}
+
 
 unique_ptr<vector<map<double, shared_ptr<Node>>>> NodeCloud::_initializeCoordinateComponentToNodeMaps() {
     auto vectorOfMaps = make_unique<vector<map<double, shared_ptr<Node>>>>(_dimensions);
@@ -69,7 +95,6 @@ unique_ptr<vector<map<double, shared_ptr<Node>>>> NodeCloud::_initializeCoordina
     }
     return vectorOfMaps;
 }
-
 
 
 //unsigned NodeCloud::calculateClusters(double radius) {
