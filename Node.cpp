@@ -24,10 +24,10 @@ const shared_ptr<vector<double>> &Node::getCoordinatesVector() {
     return _coordinates;
 }
 
-const shared_ptr<unsigned> &Node::getId(){
+unsigned int Node::getId(){
     if (_id == nullptr)
         throw runtime_error("Id is not assigned");
-    return _id;
+    return *_id;
 }
 
 void Node::setCoordinatesVector(shared_ptr<vector<double>> coordinates) {
@@ -44,4 +44,5 @@ void Node::setId(unsigned id) {
     else
         _id = make_shared<unsigned>(id);
 }
+    
 

@@ -8,17 +8,18 @@
 NodeCloudFactory::NodeCloudFactory() : _generator(_randomDevice()) {
 }
 
-shared_ptr<NodeCloud2D> NodeCloudFactory::createNodeCloud(list<vector<double>> coordinatesList) {
-    return shared_ptr<NodeCloud2D>();
+shared_ptr<NodeCloud> NodeCloudFactory::createNodeCloud(const list<vector<double>>& coordinatesList) {
+    auto nodesVector = _initializeNodesVectorFromCoordinatesList(coordinatesList);
+    return make_shared<NodeCloud>(std::move(nodesVector));
 }
 
-shared_ptr<NodeCloud2D> NodeCloudFactory::createNodeCloud(const map<unsigned short, double>& directionToDomainLength, unsigned numberOfNodes) {
+shared_ptr<NodeCloud> NodeCloudFactory::createNodeCloud(const map<unsigned short, double>& directionToDomainLength, unsigned numberOfNodes) {
     _checkInputMap(directionToDomainLength);
     auto nodesList = _initializeRandomCoordinateNodesList(directionToDomainLength, numberOfNodes);
+    //can be removed since the coords are put in a map later
     _sortNodesList(nodesList, directionToDomainLength.size());
     auto nodesVector = _covertListToVectorAndAssignID(nodesList);
-    
-    auto lol = 1;
+    return make_shared<NodeCloud>(std::move(nodesVector));
 }
 
 
@@ -43,7 +44,19 @@ NodeCloudFactory::_initializeRandomCoordinateNodesList(const map<unsigned short,
     return nodesList;
 }
 
-
+shared_ptr<vector<shared_ptr<Node>>>
+NodeCloudFactory::_initializeNodesVectorFromCoordinatesList(const list<vector<double>> &coordinatesList) {
+    auto nodesVector = make_shared<vector<shared_ptr<Node>>>(coordinatesList.size());
+    unsigned id = 0;
+    for (auto &coordinates: coordinatesList) {
+        auto node = make_shared<Node>();
+        node->setCoordinatesVector(std::move(make_shared<vector<double>>(coordinates)));
+        node->setId(id);
+        (*nodesVector)[id] = std::move(node);
+        id++;
+    }
+    return nodesVector;
+}
 
 void NodeCloudFactory::_checkInputMap(const map<unsigned short, double> &directionToDomainLength) {
     if (directionToDomainLength.size() > 3 || directionToDomainLength.size() < 2)

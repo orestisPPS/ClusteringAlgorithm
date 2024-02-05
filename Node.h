@@ -5,6 +5,7 @@
 #ifndef ALTAIRINTERVIEW_NODE_H
 #define ALTAIRINTERVIEW_NODE_H
 #include <vector>
+#include <cmath>
 #include <memory>
 #include <stdexcept>
 using namespace std;
@@ -17,11 +18,13 @@ public:
     
     const shared_ptr<vector<double>>& getCoordinatesVector();
     
-    const shared_ptr<unsigned>& getId();
+    unsigned int getId();
     
     void setCoordinatesVector(shared_ptr<vector<double>> coordinates);
 
     void setId(unsigned id);
+    
+    //double distanceTo(const shared_ptr<Node>& otherNode);
     
     
     

@@ -67,12 +67,6 @@ build CMakeFiles/altairInterview.dir/NodeCloud.cpp.o: CXX_COMPILER__altairInterv
   OBJECT_DIR = CMakeFiles/altairInterview.dir
   OBJECT_FILE_DIR = CMakeFiles/altairInterview.dir
 
-build CMakeFiles/altairInterview.dir/NodeCloud2D.cpp.o: CXX_COMPILER__altairInterview_unscanned_Debug /home/hal9000/code/altairInterview/NodeCloud2D.cpp || cmake_object_order_depends_target_altairInterview
-  DEP_FILE = CMakeFiles/altairInterview.dir/NodeCloud2D.cpp.o.d
-  FLAGS = -g -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles/altairInterview.dir
-  OBJECT_FILE_DIR = CMakeFiles/altairInterview.dir
-
 build CMakeFiles/altairInterview.dir/NodeCloudFactory.cpp.o: CXX_COMPILER__altairInterview_unscanned_Debug /home/hal9000/code/altairInterview/NodeCloudFactory.cpp || cmake_object_order_depends_target_altairInterview
   DEP_FILE = CMakeFiles/altairInterview.dir/NodeCloudFactory.cpp.o.d
   FLAGS = -g -fdiagnostics-color=always
@@ -87,7 +81,7 @@ build CMakeFiles/altairInterview.dir/NodeCloudFactory.cpp.o: CXX_COMPILER__altai
 #############################################
 # Link the executable altairInterview
 
-build altairInterview: CXX_EXECUTABLE_LINKER__altairInterview_Debug CMakeFiles/altairInterview.dir/main.cpp.o CMakeFiles/altairInterview.dir/Node.cpp.o CMakeFiles/altairInterview.dir/NodeCloud.cpp.o CMakeFiles/altairInterview.dir/NodeCloud2D.cpp.o CMakeFiles/altairInterview.dir/NodeCloudFactory.cpp.o
+build altairInterview: CXX_EXECUTABLE_LINKER__altairInterview_Debug CMakeFiles/altairInterview.dir/main.cpp.o CMakeFiles/altairInterview.dir/Node.cpp.o CMakeFiles/altairInterview.dir/NodeCloud.cpp.o CMakeFiles/altairInterview.dir/NodeCloudFactory.cpp.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/altairInterview.dir
   POST_BUILD = :

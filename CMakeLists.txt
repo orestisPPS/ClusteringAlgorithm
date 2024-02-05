@@ -8,7 +8,5 @@ add_executable(altairInterview main.cpp
         Node.h
         NodeCloud.cpp
         NodeCloud.h
-        NodeCloud2D.cpp
-        NodeCloud2D.h
         NodeCloudFactory.cpp
         NodeCloudFactory.h)
