@@ -11,34 +11,12 @@
 class NodeCloudFactory {
 public:
     
-    NodeCloudFactory();
+    NodeCloudFactory() = default;
 
-    shared_ptr<NodeCloud> createNodeCloud(const list<vector<double>>& coordinatesList);
+    static shared_ptr<NodeCloud> createNodeCloud(const list<vector<double>>& coordinatesList);
 
-    shared_ptr<NodeCloud> createNodeCloud(const map<unsigned short, double>& directionToDomainLength, unsigned numberOfNodes);
-    
-private:
-    
-    static void _checkInputMap(const map<unsigned short, double>& directionToDomainLength);
-    
-    shared_ptr<list<shared_ptr<Node>>> _initializeRandomCoordinateNodesList(const map<unsigned short, double>& directionToDomainLength, unsigned numberOfNodes);
-
-    static shared_ptr<vector<shared_ptr<Node>>> _initializeNodesVectorFromCoordinatesList(const list<vector<double>>& coordinatesList);
-    
-    static void _sortNodesList(const shared_ptr<list<shared_ptr<Node>>>& nodesList, unsigned maximumDirections);
-    
-    static shared_ptr<vector<shared_ptr<Node>>> _covertListToVectorAndAssignID(const shared_ptr<list<shared_ptr<Node>>>& nodesList);
-    
-    
-    //Seed the random device to the Mersenne Twister generator
-    random_device _randomDevice;
-    
-    //Mersenne Twister generator
-    mt19937 _generator;
+    static shared_ptr<NodeCloud> createNodeCloud(const vector<double> &directionToDomainLength, unsigned numberOfNodes);
 };
 
 
 #endif //ALTAIRINTERVIEW_NODECLOUDFACTORY_H
-
-//Abstract Factory Pattern:
-// _initalizeRandom2DNodesVector() can be take map<Direction, unsigned> as a parameter instead of domainLength1 and domainLength2

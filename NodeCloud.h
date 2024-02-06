@@ -29,14 +29,14 @@ private:
     unsigned _dimensions;
     
     unique_ptr<unordered_map<shared_ptr<Node>, list<shared_ptr<Node>>>> _nodeToNeighbours;
+
+    unique_ptr<unordered_map<shared_ptr<Node>, bool>> _visitedNodes;
     
     unique_ptr<vector<map<double, shared_ptr<Node>>>> _coordinateComponentToNodeMaps;
-
-    unique_ptr<vector<map<double, shared_ptr<Node>>>> _initializeCoordinateComponentToNodeMaps();
-    
+     
     void _searchNeighboursRecursively(const shared_ptr<Node> &node, double radius,
                                       unordered_map<shared_ptr<Node>, bool> &visitedNodes,
-                                      shared_ptr<list<shared_ptr<Node>>> cluster);
+                                      const shared_ptr<list<shared_ptr<Node>>>& cluster);
 };;
 
 

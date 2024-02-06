@@ -24,13 +24,7 @@ public:
 
     void setId(unsigned id);
     
-    //double distanceTo(const shared_ptr<Node>& otherNode);
-    
-    
-    
-    
 protected:
-
     
     shared_ptr<vector<double>> _coordinates;
     shared_ptr<unsigned> _id;

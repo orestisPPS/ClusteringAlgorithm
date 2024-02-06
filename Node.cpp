@@ -44,5 +44,5 @@ void Node::setId(unsigned id) {
     else
         _id = make_shared<unsigned>(id);
 }
-    
+
 
