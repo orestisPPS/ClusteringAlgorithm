@@ -7,6 +7,7 @@
 #include <list>
 #include <random>
 #include "NodeCloud.h"
+#include "HardwareAcceleration/ThreadingOperations.h"
 
 class NodeCloudFactory {
 public:

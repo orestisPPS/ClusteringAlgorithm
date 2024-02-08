@@ -73,6 +73,12 @@ build CMakeFiles/altairInterview.dir/NodeCloudFactory.cpp.o: CXX_COMPILER__altai
   OBJECT_DIR = CMakeFiles/altairInterview.dir
   OBJECT_FILE_DIR = CMakeFiles/altairInterview.dir
 
+build CMakeFiles/altairInterview.dir/HardwareAcceleration/HardwareAccelerationConfig.cpp.o: CXX_COMPILER__altairInterview_unscanned_Debug /home/hal9000/code/altairInterview/HardwareAcceleration/HardwareAccelerationConfig.cpp || cmake_object_order_depends_target_altairInterview
+  DEP_FILE = CMakeFiles/altairInterview.dir/HardwareAcceleration/HardwareAccelerationConfig.cpp.o.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles/altairInterview.dir
+  OBJECT_FILE_DIR = CMakeFiles/altairInterview.dir/HardwareAcceleration
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target altairInterview
@@ -81,7 +87,7 @@ build CMakeFiles/altairInterview.dir/NodeCloudFactory.cpp.o: CXX_COMPILER__altai
 #############################################
 # Link the executable altairInterview
 
-build altairInterview: CXX_EXECUTABLE_LINKER__altairInterview_Debug CMakeFiles/altairInterview.dir/main.cpp.o CMakeFiles/altairInterview.dir/Node.cpp.o CMakeFiles/altairInterview.dir/NodeCloud.cpp.o CMakeFiles/altairInterview.dir/NodeCloudFactory.cpp.o
+build altairInterview: CXX_EXECUTABLE_LINKER__altairInterview_Debug CMakeFiles/altairInterview.dir/main.cpp.o CMakeFiles/altairInterview.dir/Node.cpp.o CMakeFiles/altairInterview.dir/NodeCloud.cpp.o CMakeFiles/altairInterview.dir/NodeCloudFactory.cpp.o CMakeFiles/altairInterview.dir/HardwareAcceleration/HardwareAccelerationConfig.cpp.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/altairInterview.dir
   POST_BUILD = :

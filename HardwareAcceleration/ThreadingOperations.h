@@ -19,15 +19,12 @@ public:
 /**
     * \brief Executes the provided task in parallel across multiple threads. Each thread operates on a distinct segment
     * of the data.
-    * \tparam T The data type of the result (e.g., double, float).
     * \tparam ThreadJob A callable object type (function, lambda, functor).
-    *
-    * \param size The size of the data being processed.
-    * \param task The callable object that describes the work each thread should execute and return a local result.
+    * \param arraySize The size of the data being processed.
+    * \param objectSize The size of the object being processed.
      * \param availableThreads The number of threads available for processing.
     * \param cacheLineSize An optional parameter to adjust for system's cache line size (default is 64 bytes).
-    * 
-    * \return The combined result after the reduction step.
+
     */
     template<typename ThreadJob>
     static void executeParallelJob(ThreadJob task, size_t arraySize, size_t objectSize, unsigned availableThreads, unsigned cacheLineSize = 64) {
