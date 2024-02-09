@@ -20,7 +20,7 @@ public:
     
     list<shared_ptr<Node>> findNeighboursOfNode(const shared_ptr<Node>& node, double radius);
 
-    unsigned calculateClusters(double radius);
+    list<shared_ptr<list<shared_ptr<Node>>>> calculateClusters(double radius);
     
     HardwareAccelerationConfig hardwareAccelerationConfig;
     

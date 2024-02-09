@@ -34,39 +34,39 @@ NodeCloud::~NodeCloud() {
 }
 
 list<shared_ptr<Node>> NodeCloud::findNeighboursOfNode(const shared_ptr<Node>& node, double radius) {
-    auto neighbourCounter = make_unique<unordered_map<shared_ptr<Node>, unsigned>>();
-    auto thisCoordinates = node->getCoordinatesVector();
-    auto consideredNeighbors = make_shared<list<shared_ptr<Node>>>();
-    bool accept;
-    double distance;
+    auto candidateNodeCounter = make_unique<unordered_map<shared_ptr<Node>, unsigned>>();
+    auto &thisCoordinates = *node->getCoordinatesVector();
+    auto filteredNodes = make_shared<list<shared_ptr<Node>>>();
+    double distance, euclideanDistance;
     for (unsigned i = 0; i < _dimensions; i++) {
-        auto lowerBound = (*_coordinateComponentToNodeMaps)[i].lower_bound(thisCoordinates->at(i) - radius);
-        auto upperBound = (*_coordinateComponentToNodeMaps)[i].upper_bound(thisCoordinates->at(i) + radius);
+        auto lowerBound = (*_coordinateComponentToNodeMaps)[i].lower_bound(thisCoordinates[i] - radius);
+        auto upperBound = (*_coordinateComponentToNodeMaps)[i].upper_bound(thisCoordinates[i] + radius);
 
         for (auto it = lowerBound; it != upperBound; it++) {
-            if (neighbourCounter->find(it->second) == neighbourCounter->end())
-                (*neighbourCounter)[it->second] = 1;
+            auto &candidateNode = it->second;
+            if (candidateNodeCounter->find(candidateNode) == candidateNodeCounter->end())
+                (*candidateNodeCounter)[candidateNode] = 1;
             else{
-                auto &timesAppeared = (*neighbourCounter)[it->second];
+                auto &timesAppeared = (*candidateNodeCounter)[candidateNode];
                 timesAppeared++;
-                if (timesAppeared == _dimensions && !hardwareAccelerationConfig.isCudaEnabled()) {
-                    auto neighbourCoordinates = it->second->getCoordinatesVector();
+                if (timesAppeared == _dimensions && candidateNode != node && !hardwareAccelerationConfig.isCudaEnabled()) {
+                    auto &neighbourCoordinates = *candidateNode->getCoordinatesVector();
                     distance = 0;
                     for (unsigned j = 0; j < _dimensions; j++)
-                        distance += ((*neighbourCoordinates)[j] - (*thisCoordinates)[j]) * 
-                                    ((*neighbourCoordinates)[j] - (*thisCoordinates)[j]);
-                    if(sqrt(distance) <= radius)
-                        consideredNeighbors->push_back(it->second);
+                        distance += (thisCoordinates[j] - neighbourCoordinates[j]) * (thisCoordinates[j] - neighbourCoordinates[j]);
+                    euclideanDistance = sqrt(distance);
+                    if(euclideanDistance <= radius)
+                        filteredNodes->push_back(candidateNode);
                 }
-                else if (timesAppeared == _dimensions && hardwareAccelerationConfig.isCudaEnabled()) {
-                    consideredNeighbors->push_back(it->second);
-                }
+//                else if (timesAppeared == _dimensions && hardwareAccelerationConfig.isCudaEnabled()) {
+//                    filteredNodes->push_back(candidateNode);
+//                }
             }
         }
     }
     if (hardwareAccelerationConfig.isCudaEnabled())
-        _calculateDistancesCuda(node, radius, consideredNeighbors);
-    return std::move(*consideredNeighbors);
+        _calculateDistancesCuda(node, radius, filteredNodes);
+    return std::move(*filteredNodes);
 }
 
 void NodeCloud::_calculateDistancesCuda(const shared_ptr<Node> &node, double radius,
@@ -94,8 +94,9 @@ void NodeCloud::_calculateDistancesCuda(const shared_ptr<Node> &node, double rad
 }
 
 
-unsigned NodeCloud::calculateClusters(double radius) {
+list<shared_ptr<list<shared_ptr<Node>>>> NodeCloud::calculateClusters(double radius) {
     
+    auto clusters = list<shared_ptr<list<shared_ptr<Node>>>>();
     auto neighbourFindThreadJob = [this, radius](unsigned start, unsigned end) {
         for (auto i = start; i < end; i++) {
             auto thisNode = (*_nodes)[i];
@@ -104,15 +105,14 @@ unsigned NodeCloud::calculateClusters(double radius) {
     };
     ThreadingOperations<shared_ptr<Node>>::executeParallelJob(neighbourFindThreadJob, _nodes->size(), sizeof((*_nodes)[0]),1);
     
-    auto clusterCount = 0;
     for (auto &thisNode : *_nodes) {
         if (!(*_visitedNodes)[thisNode]) {
             auto cluster = make_shared<list<shared_ptr<Node>>>();
+            clusters.push_back(cluster);
             _searchNeighboursRecursively(thisNode, radius, *_visitedNodes, cluster);
-            clusterCount++;
         }
     }
-    return clusterCount;
+    return std::move(clusters);
 }
 
 

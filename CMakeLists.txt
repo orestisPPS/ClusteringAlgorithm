@@ -12,4 +12,8 @@ add_executable(altairInterview main.cpp
         NodeCloudFactory.h
         HardwareAcceleration/ThreadingOperations.h
         HardwareAcceleration/HardwareAccelerationConfig.cpp
-        HardwareAcceleration/HardwareAccelerationConfig.h)
+        HardwareAcceleration/HardwareAccelerationConfig.h
+        Tests/Test.cpp
+        Tests/Test.h
+        Tests/ProofOfConceptTest.h
+)
