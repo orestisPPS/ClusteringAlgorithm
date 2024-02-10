@@ -8,9 +8,8 @@ shared_ptr<NodeCloud> NodeCloudFactory::createNodeCloud(const list<vector<double
     auto nodesVector = make_shared<vector<shared_ptr<Node>>>(coordinatesList.size());
     unsigned id = 0;
     for (auto &coordinates: coordinatesList) {
-        auto node = make_shared<Node>();
+        auto node = make_shared<Node>(id);
         node->setCoordinatesVector(std::move(make_shared<vector<double>>(coordinates)));
-        node->setId(id);
         (*nodesVector)[id] = std::move(node);
         id++;
     }
@@ -35,15 +34,14 @@ shared_ptr<NodeCloud> NodeCloudFactory::createNodeCloud(const vector<double> &di
         random_device randomDevice;
         mt19937 generator(randomDevice());
         for (unsigned i = start; i < end; i++) {
-            auto node = make_shared<Node>();
+            auto node = make_shared<Node>(i);
             auto nodalCoordinates = make_shared<vector<double>>(directionToDomainLength.size());
             for (unsigned j = 0; j < directionToDomainLength.size(); j++)
                 (*nodalCoordinates)[j] = distributionsVector[j](generator);
             node->setCoordinatesVector(std::move(nodalCoordinates));
-            node->setId(i);
             (*nodesVector)[i] = std::move(node);
         }
     };
-    ThreadingOperations<shared_ptr<Node>>::executeParallelJob(nodeInitializationJob, nodesVector->size(), sizeof(shared_ptr<Node>), 10);
+    HardwareAcceleration<shared_ptr<Node>>::executeParallelJob(nodeInitializationJob, nodesVector->size(), sizeof(shared_ptr<Node>), 10);
     return make_shared<NodeCloud>(std::move(nodesVector));
 }

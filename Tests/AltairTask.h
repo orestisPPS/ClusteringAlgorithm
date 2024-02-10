@@ -1,16 +1,16 @@
 //
-// Created by hal9000 on 2/9/24.
+// Created by hal9000 on 2/10/24.
 //
 
-#ifndef ALTAIRINTERVIEW_PROOFOFCONCEPTTEST_H
-#define ALTAIRINTERVIEW_PROOFOFCONCEPTTEST_H
+#ifndef ALTAIRINTERVIEW_ALTAIRTASK_H
+#define ALTAIRINTERVIEW_ALTAIRTASK_H
 
 #include "Test.h"
 
-class ProofOfConceptTest : public Test {
+class AltairTask : public Test {
 public:
-    ProofOfConceptTest() {
-        _name = "Proof Of Concept";
+    AltairTask() {
+        _name = "Altair Task";
     }
 
     void run() override{
@@ -33,6 +33,4 @@ public:
         }
     }
 };
-
-
-#endif //ALTAIRINTERVIEW_PROOFOFCONCEPTTEST_H
+#endif //ALTAIRINTERVIEW_ALTAIRTASK_H

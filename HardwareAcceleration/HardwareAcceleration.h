@@ -2,8 +2,8 @@
 // Created by hal9000 on 2/7/24.
 //
 
-#ifndef ALTAIRINTERVIEW_THREADINGOPERATIONS_H
-#define ALTAIRINTERVIEW_THREADINGOPERATIONS_H
+#ifndef ALTAIRINTERVIEW_HARDWAREACCELERATION_H
+#define ALTAIRINTERVIEW_HARDWAREACCELERATION_H
 
 #include <stdexcept>
 #include <memory>
@@ -12,7 +12,7 @@
 using namespace std;
 
 template<typename T>
-class ThreadingOperations {
+class HardwareAcceleration {
 
 public:
 
@@ -51,5 +51,6 @@ public:
             thread.join();
         }
     }
+
 };
-#endif //ALTAIRINTERVIEW_THREADINGOPERATIONS_H
+#endif //ALTAIRINTERVIEW_HARDWAREACCELERATION_H
