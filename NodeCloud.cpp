@@ -64,9 +64,9 @@ list<shared_ptr<Node>> NodeCloud::findNeighboursOfNode(const shared_ptr<Node>& n
     return std::move(*filteredNodes);
 }
 
-list<shared_ptr<list<shared_ptr<Node>>>> NodeCloud::calculateClusters(double radius) {
+list<shared_ptr<NodeCluster>> NodeCloud::calculateClusters(double radius) {
 
-    auto clusters = list<shared_ptr<list<shared_ptr<Node>>>>();
+    auto clusters = list<shared_ptr<NodeCluster>>();
     auto neighbourFindThreadJob = [this, radius](unsigned start, unsigned end) {
         for (auto i = start; i < end; i++) {
             auto thisNode = (*_nodes)[i];
@@ -75,9 +75,11 @@ list<shared_ptr<list<shared_ptr<Node>>>> NodeCloud::calculateClusters(double rad
     };
     HardwareAcceleration<shared_ptr<Node>>::executeParallelJob(neighbourFindThreadJob, _nodes->size(), sizeof((*_nodes)[0]), 1);
 
+    unsigned clusterId = 0;
     for (auto &thisNode : *_nodes) {
         if (!(*_visitedNodes)[thisNode]) {
-            auto cluster = make_shared<list<shared_ptr<Node>>>();
+            auto cluster = make_shared<NodeCluster>(clusterId);
+            clusterId++;
             clusters.push_back(cluster);
             _searchNeighboursRecursively(thisNode, radius, *_visitedNodes, cluster);
         }
@@ -99,9 +101,9 @@ void NodeCloud::_assessNeighbour(const shared_ptr<Node> &thisNode, const shared_
 
 void NodeCloud::_searchNeighboursRecursively(const shared_ptr<Node> &node, double radius,
                                              unordered_map<shared_ptr<Node>, bool> &visitedNodes,
-                                             const shared_ptr<list<shared_ptr<Node>>>& cluster) {
+                                             const shared_ptr<NodeCluster>& cluster) {
     visitedNodes[node] = true;
-    cluster->push_back(node);
+    cluster->getNodes()->push_back(node);
     for (auto &neighbour: (*_nodeToNeighbours)[node])
         if (!visitedNodes[neighbour])
             _searchNeighboursRecursively(neighbour, radius, visitedNodes, cluster);
@@ -118,9 +120,7 @@ void NodeCloud::_calculateDistancesCuda(const shared_ptr<Node> &node, double rad
             (*coordinates)[nodeIndex * _dimensions + i] = &(*neighbourCoordinates)[i];
         nodeIndex++;
     }
-    //Do cuda stuff here
-    //...
-    //...
+    
     coordinates.reset();
     nodeIndex = 0;
     for (auto &neighbour: *consideredNeighbors) {

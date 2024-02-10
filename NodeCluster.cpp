@@ -3,11 +3,27 @@
 //
 
 #include "NodeCluster.h"
-//
-//NodeCluster::NodeCluster(unsigned int id) : _id(id), nodes(make_shared<list<shared_ptr<Node>>>()){ }
-//
-//NodeCluster::~NodeCluster() {
-//    if (nodes != nullptr) {
-//        nodes.reset();
-//    }
-//}
+
+NodeCluster::NodeCluster(unsigned int id) : _id(id), _nodes(make_unique<list<shared_ptr<Node>>>()){
+}
+
+const unique_ptr<list<shared_ptr<Node>>> &NodeCluster::getNodes() {
+    return _nodes;
+}
+
+unsigned int NodeCluster::getId() const {
+    return _id;
+}
+
+void NodeCluster::printCluster() const {
+    cout << "Cluster: " << _id << endl;
+    unsigned index = 0;
+    for (auto &node: *_nodes) {
+        cout << "[" << index << "] "<< "Node: " << node->getId() << endl;
+        index++;
+    }
+    
+}
+
+
+

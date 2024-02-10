@@ -6,6 +6,22 @@
 
 shared_ptr<NodeCloud> NodeCloudFactory::createNodeCloud(const list<vector<double>>& coordinatesList) {
     auto nodesVector = make_shared<vector<shared_ptr<Node>>>(coordinatesList.size());
+    auto commonCoordinatesSize = coordinatesList.front().size();
+    // Iterate through each set of coordinates in the list to ensure they all meet certain criteria
+    for (auto thisCoordIt = coordinatesList.begin(); thisCoordIt != coordinatesList.end(); ++thisCoordIt) {
+        const auto& coordinates = *thisCoordIt;
+
+        if (coordinates.size() != commonCoordinatesSize) {
+            throw std::runtime_error("Coordinates have different sizes");
+        }
+        for (auto otherCoordIt = next(thisCoordIt); otherCoordIt != coordinatesList.end(); ++otherCoordIt) {
+            const auto& coordinates2 = *otherCoordIt;
+            if (coordinates == coordinates2)
+                throw std::runtime_error("Coordinates are not unique");
+        }
+    }
+
+    
     unsigned id = 0;
     for (auto &coordinates: coordinatesList) {
         auto node = make_shared<Node>(id);

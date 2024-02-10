@@ -4,14 +4,13 @@
 #include <vector>
 #include <memory>
 #include <stdexcept>
-
 using namespace std;
 
 /**
  * @brief Represents a Node in an n-dimensional space.
  *
  * This class encapsulates a point within a graph or spatial data structure, identifiable by a unique ID
- * and positioned within an n-dimensional space through a vector of coordinates.
+ * and positioned within an n-dimensional space.
  */
 class Node {
 public:
