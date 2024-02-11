@@ -8,8 +8,12 @@ int main() {
     
     auto start = high_resolution_clock::now();
     
-    vector<double> directionToDomainLength = {1, 1};
-    auto cloud = NodeCloudFactory::createNodeCloud(directionToDomainLength, 1E4);
+    //vector<double> directionToDomainLength = {1, 1};
+    //vector<double> directionToDomainLength = {1, 1};
+    //auto cloud = NodeCloudFactory::createNodeCloud(directionToDomainLength, 10);
+    ProofOfConceptTest().run();
+    AltairTask().run();
+
     //cout << "radius : " << radius << " Cluster size : " << cloudInterview->calculateClusters(radius).size() << endl;
 
     //cloud->hardwareAccelerationConfig.enableCuda(true);
@@ -20,10 +24,10 @@ int main() {
 
     //auto cloud3 = NodeCloudFactory::createNodeCloud({{0, 0}, {0.01, 1}, {0.02, 2}, {0.03, 3}, {0.04, 4}});
     double radius = 1;   
-    auto clusters = cloud->calculateClusters(radius);
-    cout << "radius : " << radius << " Cluster size : " << clusters.size() << endl;
-    
-    cout << "That's all folks!" << endl;
+    //auto clusters = cloud->calculateClusters(radius);
+    //cout << "radius : " << radius << " Cluster size : " << clusters.size() << endl;
+//    
+//    cout << "That's all folks!" << endl;
 
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(stop - start);

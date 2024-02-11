@@ -62,6 +62,6 @@ shared_ptr<NodeCloud> NodeCloudFactory::createNodeCloud(const vector<double> &di
             (*nodesVector)[i] = node; //std::move(node);
         }
     };
-    HardwareAcceleration<shared_ptr<Node>>::executeParallelJob(nodeInitializationJob, nodesVector->size(), sizeof(shared_ptr<Node>), std::thread::hardware_concurrency());
+    HardwareAcceleration<shared_ptr<Node>>::executeParallelJob(nodeInitializationJob, nodesVector->size(), std::thread::hardware_concurrency());
     return make_shared<NodeCloud>(std::move(nodesVector));
 }

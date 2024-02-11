@@ -27,19 +27,19 @@ public:
         // Create a NodeCloud from the list of coordinates
         auto nodeCloud = NodeCloudFactory::createNodeCloud(coordinatesList);
 
-        auto radii = list<double>{0.7, 1.8, 4.8, 6.5, 10.6};
+        auto lengthScales = list<double>{0.7, 1.8, 4.8, 6.5, 10.6};
         auto expectedClusters = list<unsigned>{5, 4, 3, 2, 1};
         
-        for (auto radius : radii) {
-            auto cluster = nodeCloud->calculateClusters(radius);
+        for (auto lengthScale : lengthScales) {
+            auto cluster = nodeCloud->calculateClusters(lengthScale);
             _passed = cluster.size() == expectedClusters.front();
-            cout << "radius : " << radius << " Calculated Cluster size : " << cluster.size() 
+            cout << "Length Scale : " << lengthScale << " Calculated Cluster size : " << cluster.size() 
                  << " Expected Cluster size : " << expectedClusters.front() << endl;
-            for (auto &object: cluster) {
+            expectedClusters.pop_front();
+            for (auto& object : cluster) {
                 object->printCluster();
             }
         }
-        // Print the clusters
         _consoleTestEnd();
         
     }

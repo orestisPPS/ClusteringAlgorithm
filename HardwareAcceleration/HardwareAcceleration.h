@@ -27,8 +27,7 @@ public:
 
     */
     template<typename ThreadJob>
-    static void executeParallelJob(ThreadJob task, size_t arraySize, size_t objectSize,
-                                   unsigned availableThreads, unsigned cacheLineSize = 64) {
+    static void executeParallelJob(ThreadJob task, size_t arraySize, unsigned availableThreads) {
         //Determine the number of doubles that fit in a cache line
         unsigned int numThreads = std::min(availableThreads, static_cast<unsigned>(arraySize));
         
