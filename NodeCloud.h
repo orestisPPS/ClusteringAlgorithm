@@ -11,7 +11,7 @@
 #include <cmath>
 #include <algorithm>
 #include "NodeCluster.h"
-#include "HardwareAcceleration/HardwareAcceleration.h"
+#include "ThreadingOperations.h"
 
 class NodeCloud {
 public:
@@ -19,7 +19,7 @@ public:
 
     list<shared_ptr<Node>> findNeighboursOfNode(const shared_ptr<Node>& node, double radius);
 
-    list<shared_ptr<NodeCluster>> calculateClusters(double radius, unsigned availableThreads);
+    list<shared_ptr<NodeCluster>> calculateClusters(double radius, unsigned availableThreads = 1);
     
     const shared_ptr<vector<shared_ptr<Node>>> &getNodes() const {
         return _nodes;

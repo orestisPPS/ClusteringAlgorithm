@@ -4,25 +4,23 @@
 
 #include "Node.h"
 
-Node::Node(unsigned id) : _id(id) {}
+Node::Node(unsigned id) : _id(id), _coordinates(make_unique<vector<double>>()){
+}
 
 unsigned Node::getId() const{
     return _id;
 }
 
-const shared_ptr<vector<double>>& Node::getCoordinatesVector() const{
-    if (_coordinates == nullptr)
-        throw runtime_error("Coordinates are not assigned");
-    return _coordinates;
+const vector<double> & Node::getCoordinatesVector() const{
+    return *_coordinates;
 }
 
-
-void Node::setCoordinatesVector(shared_ptr<vector<double>> coordinates) {
+void Node::setCoordinatesVector(unique_ptr<vector<double>> coordinates) {
     if (coordinates == nullptr)
         throw runtime_error("Input coordinates are null");
     if (coordinates->empty())
         throw runtime_error("Input coordinates are empty");
-    _coordinates = std::move(coordinates);
+    _coordinates = move(coordinates);
 }
 
 

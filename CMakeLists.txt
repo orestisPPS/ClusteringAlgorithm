@@ -10,13 +10,13 @@ add_executable(altairInterview main.cpp
         NodeCloud.h
         NodeCloudFactory.cpp
         NodeCloudFactory.h
-        HardwareAcceleration/HardwareAcceleration.h
+        ThreadingOperations.h
         Tests/Test.cpp
         Tests/Test.h
         Tests/ProofOfConceptTest.h
         Tests/AltairExample.h
         NodeCluster.cpp
         NodeCluster.h
-        Tests/RandomDomain2DTest.h
+        Tests/RandomDomainND.h
         Tests/MultithreadingTest.h
 )

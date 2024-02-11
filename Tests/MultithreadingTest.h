@@ -18,9 +18,8 @@ public:
         // Define the length of each dimension of the domain, in this case a unit square
         auto domainLengths = vector<double>{1, 1};
         // Define the number of nodes to be generated
-        unsigned numberOfNodes = 1E3;
-        //unsigned availableThreads = thread::hardware_concurrency();
-        unsigned availableThreads = 8;
+        unsigned numberOfNodes = 2400;
+        unsigned availableThreads = thread::hardware_concurrency();
 
         // Measure the time of initialization and clustering for a single and multiple threads
         auto singleThreadTime = _measureTime(1, numberOfNodes);
