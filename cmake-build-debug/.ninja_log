@@ -79,3 +79,13 @@
 2	1064	1707689808715657028	CMakeFiles/altairInterview.dir/NodeCloudFactory.cpp.o	77c04ecbd7b0f27a
 2	1440	1707689809087657402	CMakeFiles/altairInterview.dir/NodeCloud.cpp.o	3b92a9646884bab9
 1440	1558	1707689809207657522	altairInterview	2844aba7767cfb8e
+2	480	1707690171260062175	CMakeFiles/altairInterview.dir/NodeCluster.cpp.o	5de2a2b17dcb806a
+2	763	1707690171544062517	CMakeFiles/altairInterview.dir/Tests/Test.cpp.o	5f591c37e444e3c3
+1	1022	1707690171804062831	CMakeFiles/altairInterview.dir/main.cpp.o	47d37b0a44b6a210
+1	1093	1707690171872062913	CMakeFiles/altairInterview.dir/NodeCloudFactory.cpp.o	77c04ecbd7b0f27a
+1	1456	1707690172236063352	CMakeFiles/altairInterview.dir/NodeCloud.cpp.o	3b92a9646884bab9
+1456	1572	1707690172352063492	altairInterview	2844aba7767cfb8e
+1	881	1707690478236506449	CMakeFiles/altairInterview.dir/main.cpp.o	47d37b0a44b6a210
+881	999	1707690478352506820	altairInterview	2844aba7767cfb8e
+1	908	1707690528664664132	CMakeFiles/altairInterview.dir/main.cpp.o	47d37b0a44b6a210
+909	1030	1707690528784664499	altairInterview	2844aba7767cfb8e

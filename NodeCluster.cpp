@@ -7,8 +7,8 @@
 NodeCluster::NodeCluster(unsigned int id) : _id(id), _nodes(make_unique<list<shared_ptr<Node>>>()){
 }
 
-const unique_ptr<list<shared_ptr<Node>>> &NodeCluster::getNodes() {
-    return _nodes;
+list<shared_ptr<Node>> & NodeCluster::getNodes() const{
+    return *_nodes;
 }
 
 unsigned int NodeCluster::getId() const {

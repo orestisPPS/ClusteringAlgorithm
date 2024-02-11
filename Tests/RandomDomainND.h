@@ -14,8 +14,8 @@ public:
         if (dimensions < 2) {
             throw invalid_argument("RandomDomainND: Dimensions must be at least 2");
         }
-        _name = "Random Domain 2D Test";
         _dimensions = dimensions;
+        _name = "Random Domain " + to_string(_dimensions) + "D";
     }
 
     void run() override{
@@ -33,9 +33,9 @@ public:
             _passed = false;
         if (!_checkNodesInDomain(nodeCloud, domainLengths))
             _passed = false;
-        if (!_checkEdgeClusterSize(nodeCloud, 1, 1))
+        if (!_checkEdgeCaseClusterSize(nodeCloud, 1, 1))
             _passed = false;
-        if (!_checkEdgeClusterSize(nodeCloud, 0, numberOfNodes))
+        if (!_checkEdgeCaseClusterSize(nodeCloud, 0, numberOfNodes))
             _passed = false;
     }
     
@@ -85,7 +85,7 @@ private:
         return true;
     }
 
-    static bool _checkEdgeClusterSize(const unique_ptr<NodeCloud>& nodeCloud, double radius, unsigned expectedSize) {
+    static bool _checkEdgeCaseClusterSize(const unique_ptr<NodeCloud>& nodeCloud, double radius, unsigned expectedSize) {
         auto clusters = nodeCloud->calculateClusters(radius);
         bool accepted = true;
         if (clusters.size() != expectedSize) {

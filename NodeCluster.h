@@ -1,64 +1,49 @@
-//
-// Created by hal9000 on 2/10/24.
-//
+/**
+ * @file NodeCluster.h
+ * @brief Defines the NodeCluster class, representing a collection of Node objects.
+ *
+ * A NodeCluster is identified by a unique ID and aggregates multiple Node objects into a single entity.
+ * This class provides functionalities to access and manipulate the cluster's nodes and to print the cluster's details.
+ */
 
-#ifndef ALTAIRINTERVIEW_NODECLUSTER_H
-#define ALTAIRINTERVIEW_NODECLUSTER_H
-#include "Node.h"
+#ifndef NODECLUSTER_H
+#define NODECLUSTER_H
+
+#include <memory>
 #include <list>
 #include <iostream>
+#include "Node.h"
 
-/**
- * @class NodeCluster
- * @brief Represents a cluster of nodes and is identified by a unique ID.
- *
- * NodeCluster encapsulates a collection of Node objects, allowing for the grouping of nodes
- * under a common identifier. 
- */
 class NodeCluster {
 public:
     /**
-     * @brief Constructs a NodeCluster with a specified ID.
-     * 
-     * Initializes the NodeCluster with an empty list of nodes. The ID provided is used to uniquely
-     * identify the cluster.
-     * 
-     * @param id The unique identifier for the NodeCluster.
+     * @brief Constructs a new NodeCluster with a given ID.
+     * @param id The unique identifier for the cluster.
      */
     explicit NodeCluster(unsigned int id);
 
     /**
-     * @brief Gets a constant reference to the unique pointer holding the list of nodes.
-     * 
-     * Provides access to the list of nodes contained within the cluster and allows for manipulation
-     * of the nodes, including adding new nodes or modifying existing ones.
-     * 
-     * @return const unique_ptr<list<shared_ptr<Node>>>& A constant reference to the unique pointer
-     *         holding the list of nodes.
+     * @brief Gets the list of nodes in the cluster.
+     * @return A reference to the list of shared_ptr<Node> objects.
      */
-    const unique_ptr<list<shared_ptr<Node>>>& getNodes();
+    list<shared_ptr<Node>>& getNodes() const;
 
     /**
-     * @brief Gets the ID of the cluster
-     * 
-     * @return unsigned The ID of the NodeCluster.
+     * @brief Gets the unique ID of the cluster.
+     * @return The cluster's unique ID.
      */
     unsigned int getId() const;
 
     /**
-     * @brief Prints the details of the NodeCluster to standard output.
+     * @brief Prints the details of the cluster to standard output.
      * 
-     * Iterates through each node in the cluster and prints its ID along with its index within
-     * the cluster.
+     * Iterates over all nodes in the cluster, printing the cluster id and each node's ID. 
      */
     void printCluster() const;
 
 private:
-    unsigned int _id; ///< The unique identifier for the NodeCluster.
-    
-    unique_ptr<list<shared_ptr<Node>>> _nodes; ///< Dynamically allocated list of nodes within the cluster.
+    unique_ptr<list<shared_ptr<Node>>> _nodes; ///< Dynamically allocated list of nodes in the cluster.
+    unsigned int _id; ///< Unique identifier for the cluster.
 };
 
-
-
-#endif //ALTAIRINTERVIEW_NODECLUSTER_H
+#endif // NODECLUSTER_H

@@ -42,7 +42,7 @@ public:
             cout << endl;
             expectedClusters.pop_front();
             for (auto& object : cluster) {
-                object->printCluster();
+                //object->printCluster();
             }
         }
         _consoleTestEnd();
