@@ -59,7 +59,7 @@ list<shared_ptr<Node>> NodeCloud::findNeighboursOfNode(const shared_ptr<Node>& n
     return std::move(*filteredNodes);
 }
 
-list<shared_ptr<NodeCluster>> NodeCloud::calculateClusters(double radius) {
+list<shared_ptr<NodeCluster>> NodeCloud::calculateClusters(double radius, unsigned availableThreads) {
 
     auto clusters = list<shared_ptr<NodeCluster>>();
 
@@ -69,7 +69,7 @@ list<shared_ptr<NodeCluster>> NodeCloud::calculateClusters(double radius) {
             (*_nodeToNeighbours)[thisNode] = std::move(findNeighboursOfNode(thisNode, radius));
         }
     };
-    HardwareAcceleration<shared_ptr<Node>>::executeParallelJob(neighbourFindThreadJob, _nodes->size(),1);
+    HardwareAcceleration<shared_ptr<Node>>::executeParallelJob(neighbourFindThreadJob, _nodes->size(), availableThreads);
 
     unsigned clusterId = 0;
     for (auto &thisNode : *_nodes) {
@@ -87,7 +87,7 @@ list<shared_ptr<NodeCluster>> NodeCloud::calculateClusters(double radius) {
             (*_nodeToNeighbours)[(*_nodes)[i]].clear();
         }
     };
-    HardwareAcceleration<shared_ptr<Node>>::executeParallelJob(clearUnorderedMap, _nodes->size(),1);
+    HardwareAcceleration<shared_ptr<Node>>::executeParallelJob(clearUnorderedMap, _nodes->size(), availableThreads);
     return std::move(clusters);
 }
 

@@ -22,7 +22,7 @@ void NodeCluster::printCluster() const {
         cout << "[" << index << "] "<< "Node: " << node->getId() << endl;
         index++;
     }
-    
+    cout << endl;
 }
 
 

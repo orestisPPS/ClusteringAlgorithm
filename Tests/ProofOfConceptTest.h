@@ -24,7 +24,7 @@ public:
         // Create a NodeCloud from the list of coordinates
         auto nodeCloud = NodeCloudFactory::createNodeCloud(coordinatesList);
         // Calculate the clusters of the NodeCloud
-        auto clusters = nodeCloud->calculateClusters(1);
+        auto clusters = nodeCloud->calculateClusters(1, 1);
         for (auto &cluster : clusters) {
             cluster->printCluster();
         }

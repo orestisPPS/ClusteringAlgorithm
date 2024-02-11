@@ -1,28 +1,26 @@
 #include <iostream>
 #include <chrono>
 #include "Tests/ProofOfConceptTest.h"
-#include "Tests/AltairTask.h"
+#include "Tests/AltairExample.h"
+#include "Tests/RandomDomain2DTest.h"
+#include "Tests/MultithreadingTest.h"
 using namespace std::chrono;
 
 int main() {
     
     auto start = high_resolution_clock::now();
     
-    //vector<double> directionToDomainLength = {1, 1};
-    //vector<double> directionToDomainLength = {1, 1};
-    //auto cloud = NodeCloudFactory::createNodeCloud(directionToDomainLength, 10);
     ProofOfConceptTest().run();
-    AltairTask().run();
+    AltairExample().run();
+    RandomDomain2DTest().run();
+    MultithreadingTest().run();
 
     //cout << "radius : " << radius << " Cluster size : " << cloudInterview->calculateClusters(radius).size() << endl;
 
     //cloud->hardwareAccelerationConfig.enableCuda(true);
     //auto cloud = NodeCloudFactory::createNodeCloud(directionToDomainLength,4E0);
 
-    //auto cloud2 = factory.createNodeCloud({{4, 4}, {3, 3}, {2, 2}, {1, 1}});
-    //auto cloudInterview = NodeCloudFactory::createNodeCloud({{3.2, 5.11}, {11.4, 5}, {0, 5.1}, {3.21,0}, {12.8, 4.9}});
 
-    //auto cloud3 = NodeCloudFactory::createNodeCloud({{0, 0}, {0.01, 1}, {0.02, 2}, {0.03, 3}, {0.04, 4}});
     double radius = 1;   
     //auto clusters = cloud->calculateClusters(radius);
     //cout << "radius : " << radius << " Cluster size : " << clusters.size() << endl;

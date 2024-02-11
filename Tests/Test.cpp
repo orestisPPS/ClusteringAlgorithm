@@ -5,7 +5,9 @@
 #include "Test.h"
 
 void Test::_consoleTestStart() const {
+    cout << "-----------------------------------" << endl;
     std::cout << "Running " << _name << "... " << std::endl;
+    cout << "-----------------------------------" << endl;
 }
 
 void Test::_consoleTestEnd() const {

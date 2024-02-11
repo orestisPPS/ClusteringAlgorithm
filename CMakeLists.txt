@@ -14,7 +14,9 @@ add_executable(altairInterview main.cpp
         Tests/Test.cpp
         Tests/Test.h
         Tests/ProofOfConceptTest.h
-        Tests/AltairTask.h
+        Tests/AltairExample.h
         NodeCluster.cpp
         NodeCluster.h
+        Tests/RandomDomain2DTest.h
+        Tests/MultithreadingTest.h
 )

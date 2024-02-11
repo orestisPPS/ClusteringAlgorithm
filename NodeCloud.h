@@ -19,7 +19,11 @@ public:
 
     list<shared_ptr<Node>> findNeighboursOfNode(const shared_ptr<Node>& node, double radius);
 
-    list<shared_ptr<NodeCluster>> calculateClusters(double radius);
+    list<shared_ptr<NodeCluster>> calculateClusters(double radius, unsigned availableThreads);
+    
+    const shared_ptr<vector<shared_ptr<Node>>> &getNodes() const {
+        return _nodes;
+    }
 
     ~NodeCloud();
 

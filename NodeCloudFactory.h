@@ -43,7 +43,12 @@ public:
      * @return shared_ptr<NodeCloud> A shared pointer to the created NodeCloud.
      * @throws runtime_error If the input parameters are invalid, such as an empty domain lengths vector or a non-positive number of Nodes.
      */
-    static shared_ptr<NodeCloud> createNodeCloud(const vector<double> &directionToDomainLength, unsigned numberOfNodes);
-
+    static shared_ptr<NodeCloud> createNodeCloud(const vector<double> &directionToDomainLength, unsigned numberOfNodes,
+                                                 unsigned availableThreads);
+    
+private:
+    
+    static void _checkRandomDomainInput(const vector<double> &directionToDomainLength, unsigned numberOfNodes,
+                                 unsigned availableThreads);
 };
 #endif //ALTAIRINTERVIEW_NODECLOUDFACTORY_H
