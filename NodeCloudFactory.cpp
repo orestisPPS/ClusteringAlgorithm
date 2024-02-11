@@ -39,9 +39,13 @@ shared_ptr<NodeCloud> NodeCloudFactory::createNodeCloud(const vector<double> &di
         if (length <= 0)
             throw runtime_error("Domain length should be greater than 0");
 
-    auto distributionsVector = vector<uniform_real_distribution<double>>(directionToDomainLength.size());
+    //auto distributionsVector = vector<uniform_real_distribution<double>>(directionToDomainLength.size());
+    auto distributionsVector = vector<normal_distribution<double>>(directionToDomainLength.size());
+
+    //auto distribution2  = normal_distribution<double>(0, directionToDomainLength[0]);
     for (unsigned i = 0; i < directionToDomainLength.size(); i++)
-        distributionsVector[i] = uniform_real_distribution<double>(0, directionToDomainLength[i]);
+        //distributionsVector[i] = uniform_real_distribution<double>(0, directionToDomainLength[i]);
+        distributionsVector[i] = normal_distribution<double>(0, directionToDomainLength[i]);
 
     auto nodesVector = make_shared<vector<shared_ptr<Node>>>(numberOfNodes);
     
@@ -55,9 +59,9 @@ shared_ptr<NodeCloud> NodeCloudFactory::createNodeCloud(const vector<double> &di
             for (unsigned j = 0; j < directionToDomainLength.size(); j++)
                 (*nodalCoordinates)[j] = distributionsVector[j](generator);
             node->setCoordinatesVector(std::move(nodalCoordinates));
-            (*nodesVector)[i] = std::move(node);
+            (*nodesVector)[i] = node; //std::move(node);
         }
     };
-    HardwareAcceleration<shared_ptr<Node>>::executeParallelJob(nodeInitializationJob, nodesVector->size(), sizeof(shared_ptr<Node>), 10);
+    HardwareAcceleration<shared_ptr<Node>>::executeParallelJob(nodeInitializationJob, nodesVector->size(), sizeof(shared_ptr<Node>), std::thread::hardware_concurrency());
     return make_shared<NodeCloud>(std::move(nodesVector));
 }

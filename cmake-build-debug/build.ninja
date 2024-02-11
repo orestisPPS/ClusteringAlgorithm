@@ -50,42 +50,36 @@ cmake_ninja_workdir = /home/hal9000/code/altairInterview/cmake-build-debug/
 build cmake_object_order_depends_target_altairInterview: phony || CMakeFiles/altairInterview.dir
 
 build CMakeFiles/altairInterview.dir/main.cpp.o: CXX_COMPILER__altairInterview_unscanned_Debug /home/hal9000/code/altairInterview/main.cpp || cmake_object_order_depends_target_altairInterview
-  DEFINES = -DWITH_CUDA
   DEP_FILE = CMakeFiles/altairInterview.dir/main.cpp.o.d
   FLAGS = -g -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles/altairInterview.dir
   OBJECT_FILE_DIR = CMakeFiles/altairInterview.dir
 
 build CMakeFiles/altairInterview.dir/Node.cpp.o: CXX_COMPILER__altairInterview_unscanned_Debug /home/hal9000/code/altairInterview/Node.cpp || cmake_object_order_depends_target_altairInterview
-  DEFINES = -DWITH_CUDA
   DEP_FILE = CMakeFiles/altairInterview.dir/Node.cpp.o.d
   FLAGS = -g -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles/altairInterview.dir
   OBJECT_FILE_DIR = CMakeFiles/altairInterview.dir
 
 build CMakeFiles/altairInterview.dir/NodeCloud.cpp.o: CXX_COMPILER__altairInterview_unscanned_Debug /home/hal9000/code/altairInterview/NodeCloud.cpp || cmake_object_order_depends_target_altairInterview
-  DEFINES = -DWITH_CUDA
   DEP_FILE = CMakeFiles/altairInterview.dir/NodeCloud.cpp.o.d
   FLAGS = -g -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles/altairInterview.dir
   OBJECT_FILE_DIR = CMakeFiles/altairInterview.dir
 
 build CMakeFiles/altairInterview.dir/NodeCloudFactory.cpp.o: CXX_COMPILER__altairInterview_unscanned_Debug /home/hal9000/code/altairInterview/NodeCloudFactory.cpp || cmake_object_order_depends_target_altairInterview
-  DEFINES = -DWITH_CUDA
   DEP_FILE = CMakeFiles/altairInterview.dir/NodeCloudFactory.cpp.o.d
   FLAGS = -g -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles/altairInterview.dir
   OBJECT_FILE_DIR = CMakeFiles/altairInterview.dir
 
 build CMakeFiles/altairInterview.dir/Tests/Test.cpp.o: CXX_COMPILER__altairInterview_unscanned_Debug /home/hal9000/code/altairInterview/Tests/Test.cpp || cmake_object_order_depends_target_altairInterview
-  DEFINES = -DWITH_CUDA
   DEP_FILE = CMakeFiles/altairInterview.dir/Tests/Test.cpp.o.d
   FLAGS = -g -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles/altairInterview.dir
   OBJECT_FILE_DIR = CMakeFiles/altairInterview.dir/Tests
 
 build CMakeFiles/altairInterview.dir/NodeCluster.cpp.o: CXX_COMPILER__altairInterview_unscanned_Debug /home/hal9000/code/altairInterview/NodeCluster.cpp || cmake_object_order_depends_target_altairInterview
-  DEFINES = -DWITH_CUDA
   DEP_FILE = CMakeFiles/altairInterview.dir/NodeCluster.cpp.o.d
   FLAGS = -g -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles/altairInterview.dir
@@ -150,14 +144,14 @@ build all: phony altairInterview
 #############################################
 # Re-run CMake if any of its inputs changed.
 
-build build.ninja: RERUN_CMAKE | /home/hal9000/code/altairInterview/CMakeLists.txt /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeCInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeCUDAInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeCXXInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeCommonLanguageInclude.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeGenericSystem.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeInitializeConfigs.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeLanguageInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeSystemSpecificInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeSystemSpecificInitialize.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckLanguage.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/CMakeCommonCompilerMacros.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/GNU-C.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/GNU-CXX.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/GNU.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/NVIDIA-CUDA.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux-GNU-C.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux-GNU-CXX.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux-GNU.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux-Initialize.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/3.27.8/CMakeCCompiler.cmake CMakeFiles/3.27.8/CMakeCUDACompiler.cmake CMakeFiles/3.27.8/CMakeCXXCompiler.cmake CMakeFiles/3.27.8/CMakeSystem.cmake
+build build.ninja: RERUN_CMAKE | /home/hal9000/code/altairInterview/CMakeLists.txt /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeCInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeCXXInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeCommonLanguageInclude.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeGenericSystem.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeInitializeConfigs.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeLanguageInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeSystemSpecificInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeSystemSpecificInitialize.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/CMakeCommonCompilerMacros.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/GNU-C.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/GNU-CXX.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/GNU.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux-GNU-C.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux-GNU-CXX.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux-GNU.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux-Initialize.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/3.27.8/CMakeCCompiler.cmake CMakeFiles/3.27.8/CMakeCXXCompiler.cmake CMakeFiles/3.27.8/CMakeSystem.cmake
   pool = console
 
 
 #############################################
 # A missing CMake input file is not an error.
 
-build /home/hal9000/code/altairInterview/CMakeLists.txt /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeCInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeCUDAInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeCXXInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeCommonLanguageInclude.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeGenericSystem.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeInitializeConfigs.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeLanguageInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeSystemSpecificInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeSystemSpecificInitialize.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CheckLanguage.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/CMakeCommonCompilerMacros.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/GNU-C.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/GNU-CXX.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/GNU.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/NVIDIA-CUDA.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux-GNU-C.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux-GNU-CXX.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux-GNU.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux-Initialize.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/3.27.8/CMakeCCompiler.cmake CMakeFiles/3.27.8/CMakeCUDACompiler.cmake CMakeFiles/3.27.8/CMakeCXXCompiler.cmake CMakeFiles/3.27.8/CMakeSystem.cmake: phony
+build /home/hal9000/code/altairInterview/CMakeLists.txt /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeCInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeCXXInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeCommonLanguageInclude.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeGenericSystem.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeInitializeConfigs.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeLanguageInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeSystemSpecificInformation.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeSystemSpecificInitialize.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/CMakeCommonCompilerMacros.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/GNU-C.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/GNU-CXX.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Compiler/GNU.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux-GNU-C.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux-GNU-CXX.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux-GNU.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux-Initialize.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/Linux.cmake /snap/clion/263/bin/cmake/linux/x64/share/cmake-3.27/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/3.27.8/CMakeCCompiler.cmake CMakeFiles/3.27.8/CMakeCXXCompiler.cmake CMakeFiles/3.27.8/CMakeSystem.cmake: phony
 
 
 #############################################

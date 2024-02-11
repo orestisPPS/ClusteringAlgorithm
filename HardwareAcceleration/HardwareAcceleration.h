@@ -27,16 +27,14 @@ public:
 
     */
     template<typename ThreadJob>
-    static void executeParallelJob(ThreadJob task, size_t arraySize, size_t objectSize, unsigned availableThreads, unsigned cacheLineSize = 64) {
+    static void executeParallelJob(ThreadJob task, size_t arraySize, size_t objectSize,
+                                   unsigned availableThreads, unsigned cacheLineSize = 64) {
         //Determine the number of doubles that fit in a cache line
-        unsigned objectsPerCacheLine = cacheLineSize / objectSize;
         unsigned int numThreads = std::min(availableThreads, static_cast<unsigned>(arraySize));
+        
         //Determine the block size.
-        unsigned blockSize = (arraySize + numThreads - 1) / numThreads;
-        blockSize = (blockSize + objectsPerCacheLine - 1) / objectsPerCacheLine * objectsPerCacheLine;
-        if (blockSize * numThreads > arraySize) {
-            blockSize = arraySize / numThreads;
-        }
+        unsigned blockSize = (arraySize / numThreads) ;
+
         vector<thread> threads;
         for (unsigned int i = 0; i < numThreads; ++i) {
             unsigned start = i * blockSize;
@@ -44,6 +42,9 @@ public:
             if (start >= arraySize)
                 break;
             end = std::min(end, static_cast<unsigned>(arraySize));
+            if (i == numThreads - 1) {
+                end = arraySize;
+            }
             threads.push_back(thread(task, start, end));
         }
 
@@ -51,6 +52,5 @@ public:
             thread.join();
         }
     }
-
 };
 #endif //ALTAIRINTERVIEW_HARDWAREACCELERATION_H
