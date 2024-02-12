@@ -5,7 +5,7 @@
 #include "NodeCloudFactory.h"
 
 unique_ptr<NodeCloud> NodeCloudFactory::createNodeCloud(const list<vector<double>>& coordinatesList) {
-    auto nodesVector = make_shared<vector<shared_ptr<Node>>>(coordinatesList.size());
+    auto nodesVector = make_unique<vector<shared_ptr<Node>>>(coordinatesList.size());
     auto commonCoordinatesSize = coordinatesList.front().size();
     // Iterate through each set of coordinates in the list to ensure they all meet certain criteria
     for (auto thisCoordIt = coordinatesList.begin(); thisCoordIt != coordinatesList.end(); ++thisCoordIt) {
@@ -40,7 +40,7 @@ NodeCloudFactory::createNodeCloud(const vector<double> &dimensionsLengths, unsig
     auto distributionsVector = vector<uniform_real_distribution<double>>(dimensionsLengths.size());
     for (unsigned i = 0; i < dimensionsLengths.size(); i++)
         distributionsVector[i] = uniform_real_distribution<double>(0, dimensionsLengths[i]);
-    auto nodesVector = make_shared<vector<shared_ptr<Node>>>(numberOfNodes);
+    auto nodesVector = make_unique<vector<shared_ptr<Node>>>(numberOfNodes);
     
     auto nodeInitializationJob = [&](unsigned start, unsigned end) {
         //Random device to seed the Mersenne Twister generator
@@ -52,8 +52,7 @@ NodeCloudFactory::createNodeCloud(const vector<double> &dimensionsLengths, unsig
             for (unsigned j = 0; j < dimensionsLengths.size(); j++)
                 (*nodalCoordinates)[j] = distributionsVector[j](generator);
             node->setCoordinatesVector(std::move(nodalCoordinates));
-            //TODO - Investigate why std::move over assignent
-            (*nodesVector)[i] = node; //std::move(node);
+            (*nodesVector)[i] = std::move(node);
         }
     };
     ThreadingOperations<shared_ptr<Node>>::executeParallelJob(nodeInitializationJob, nodesVector->size(), availableThreads);

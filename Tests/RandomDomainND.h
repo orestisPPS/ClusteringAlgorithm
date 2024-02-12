@@ -23,7 +23,7 @@ public:
         // Define the length of each dimension of the domain, in this case a unit square
         auto domainLengths = vector<double>(_dimensions, 1);
         // Define the number of nodes to be generated
-        auto numberOfNodes = 100;
+        auto numberOfNodes = 500;
         // Create a NodeCloud with random nodes
         auto nodeCloud = NodeCloudFactory::createNodeCloud(domainLengths, numberOfNodes, 1);
         _passed = true;
@@ -37,6 +37,7 @@ public:
             _passed = false;
         if (!_checkEdgeCaseClusterSize(nodeCloud, 0, numberOfNodes))
             _passed = false;
+        _consoleTestEnd();
     }
     
 private:
@@ -45,21 +46,21 @@ private:
     
     static bool _checkNodeVectorSize(const unique_ptr<NodeCloud>& nodeCloud, unsigned expectedSize) {
         auto _accepted = true;
-        if (nodeCloud->getNodes()->empty()) {
+        if (nodeCloud->getNodes().empty()) {
             cout << "No nodes detected in the NodeCloud" << endl;
             _accepted = false;
         }
-        if (nodeCloud->getNodes()->size() != expectedSize) {
+        if (nodeCloud->getNodes().size() != expectedSize) {
             _accepted = false;
         }
-        cout <<"Expected # of nodes: " << expectedSize << " Calculated # of nodes: " << nodeCloud->getNodes()->size() << endl;
+        cout <<"Expected # of nodes: " << expectedSize << " Calculated # of nodes: " << nodeCloud->getNodes().size() << endl;
         return _accepted;
     }
     
     static bool _checkSameCoordinateLength(const unique_ptr<NodeCloud>& nodeCloud) {
         auto nodes = nodeCloud->getNodes();
-        auto commonCoordinateLength = (*nodes)[0]->getCoordinatesVector().size();
-        for (auto& node : *nodes) {
+        auto commonCoordinateLength = nodes[0]->getCoordinatesVector().size();
+        for (auto& node : nodes) {
             if (node->getCoordinatesVector().size() != commonCoordinateLength){
                 cout << "Different coordinate vector lengths detected in the NodeCloud" << endl;
                 return false;
@@ -71,7 +72,7 @@ private:
     
     static bool _checkNodesInDomain(const unique_ptr<NodeCloud>& nodeCloud, const vector<double>& domainLengths) {
         auto nodes = nodeCloud->getNodes();
-        for (auto& node : *nodes) {
+        for (auto& node : nodes) {
             auto &coordinates = node->getCoordinatesVector();
             for (unsigned i = 0; i < coordinates.size(); i++) {
                 if ((coordinates)[i] < 0 || (coordinates)[i] > domainLengths[i]) {

@@ -5,7 +5,7 @@
 #include "NodeCloud.h"
 
 
-NodeCloud::NodeCloud(shared_ptr<vector<shared_ptr<Node>>> nodesVector) {
+NodeCloud::NodeCloud(unique_ptr<vector<shared_ptr<Node>>> nodesVector) {
     if (nodesVector->empty())
         throw runtime_error("NodeCloud cannot be created with an empty node vector");
     _nodes = std::move(nodesVector);
@@ -31,6 +31,10 @@ NodeCloud::~NodeCloud() {
         _coordinateComponentToNodeMaps.reset();
 }
 
+const vector<shared_ptr<Node>> &NodeCloud::getNodes() const {
+    return *_nodes;
+}
+
 list<shared_ptr<Node>> NodeCloud::findNeighboursOfNode(const shared_ptr<Node>& node, double radius) {
     auto candidateNodeCounter = make_unique<unordered_map<shared_ptr<Node>, unsigned>>();
     auto thisCoordinates = node->getCoordinatesVector();
@@ -49,8 +53,8 @@ list<shared_ptr<Node>> NodeCloud::findNeighboursOfNode(const shared_ptr<Node>& n
                 else {
                     auto &timesAppeared = (*candidateNodeCounter)[candidateNode];
                     timesAppeared++;
-                    if (timesAppeared == _dimensions && candidateNode != node) {
-                        _assessNeighbour(node, candidateNode, radius, *filteredNodes);
+                    if (timesAppeared == _dimensions && candidateNode != node && _assessNeighbour(node, candidateNode, radius, *filteredNodes)) {
+                        filteredNodes->push_back(candidateNode);
                     }
                 }
             }
@@ -77,7 +81,7 @@ list<shared_ptr<NodeCluster>> NodeCloud::calculateClusters(double radius, unsign
             auto cluster = make_shared<NodeCluster>(clusterId);
             clusterId++;
             clusters.push_back(cluster);
-            _searchNeighboursRecursively(thisNode, radius, cluster);
+            _searchNeighboursRecursively(thisNode, cluster);
         }
     }
     
@@ -91,7 +95,7 @@ list<shared_ptr<NodeCluster>> NodeCloud::calculateClusters(double radius, unsign
     return std::move(clusters);
 }
 
-void NodeCloud::_assessNeighbour(const shared_ptr<Node> &thisNode, const shared_ptr<Node> &candidateNode, double radius,
+bool NodeCloud::_assessNeighbour(const shared_ptr<Node> &thisNode, const shared_ptr<Node> &candidateNode, double radius,
                                  list<shared_ptr<Node>> &filteredNodes) const {
     auto &thisCoordinates = thisNode->getCoordinatesVector();
     auto &candidateCoordinates = candidateNode->getCoordinatesVector();
@@ -100,16 +104,16 @@ void NodeCloud::_assessNeighbour(const shared_ptr<Node> &thisNode, const shared_
     for (unsigned j = 0; j < _dimensions; j++)
         distance += (thisCoordinates[j] - candidateCoordinates[j]) * (thisCoordinates[j] - candidateCoordinates[j]);
     if( sqrt(distance) <= radius)
-        filteredNodes.push_back(candidateNode);
+        return true;
+    return false;
 }
 
-void NodeCloud::_searchNeighboursRecursively(const shared_ptr<Node> &node, double radius,
-                                             const shared_ptr<NodeCluster> &cluster) {
+void NodeCloud::_searchNeighboursRecursively(const shared_ptr<Node> &node, const shared_ptr<NodeCluster> &cluster) {
     (*_visitedNodes)[node] = true;
     cluster->getNodes().push_back(node);
     for (auto &neighbour: (*_nodeToNeighbours)[node])
         if (!(*_visitedNodes)[neighbour])
-            _searchNeighboursRecursively(neighbour, radius, cluster);
+            _searchNeighboursRecursively(neighbour, cluster);
 }
 
 

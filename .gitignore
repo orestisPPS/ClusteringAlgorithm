@@ -38,6 +38,7 @@ temp/
 *.log
 *.tmp
 
-Document1.docx
-Document2.pdf
+*.docx
+*.pdf
+
 
