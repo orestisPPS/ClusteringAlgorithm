@@ -1,3 +1,0 @@
-/home/hal9000/code/altairInterview/cmake-build-debug/CMakeFiles/altairInterview.dir
-/home/hal9000/code/altairInterview/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/hal9000/code/altairInterview/cmake-build-debug/CMakeFiles/rebuild_cache.dir
