@@ -13,6 +13,14 @@ public:
         _name = "Altair Task";
     }
 
+    /**
+    * @brief Tests the code based on the provided example
+    *
+    *      Nodes : 1 (3.2, 5)  2 (11.4, 5)  3 (0, 5)  4 (3.2,0)  5 (12.8, 5)
+    *      Length scales : Red : 0.7, Orange : 1.8, Green : 4.8, Blue : 6.5, Purple : 10.6
+    *      Expected output: Red : 5, Orange : 4, Green : 3, Blue : 2, Purple : 1
+    *  @note Passes if the number of clusters for each length scale is as expected and fails otherwise.
+    */
     void run() override{
         _consoleTestStart();
         

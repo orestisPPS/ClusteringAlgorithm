@@ -19,9 +19,8 @@ public:
     /**
      * \brief Executes a given task in parallel, distributing the workload across multiple threads.
      *
-     * This function divides a contiguous data array into nearly equal segments, each processed by a separate thread.
+     * Template-based function that divides a contiguous data array into nearly equal segments, each processed by a separate thread.
      * It ensures all segments are processed by adjusting the last segment's end index to cover the entire array if needed.
-     * The function is template-based, allowing for flexible task types.
      *
      * \tparam ThreadJob A callable object type that takes two parameters: the start and end indices of the segment to process.
      *                   The callable object is expected to handle elements from 'start' up to but not including 'end'.

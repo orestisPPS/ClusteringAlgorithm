@@ -1,10 +1,4 @@
-/**
- * @file NodeCluster.h
- * @brief Defines the NodeCluster class, representing a collection of Node objects.
- *
- * A NodeCluster is identified by a unique ID and aggregates multiple Node objects into a single entity.
- * This class provides functionalities to access and manipulate the cluster's nodes and to print the cluster's details.
- */
+
 
 #ifndef NODECLUSTER_H
 #define NODECLUSTER_H
@@ -13,7 +7,10 @@
 #include <list>
 #include <iostream>
 #include "Node.h"
-
+/**
+ * @brief Defines the NodeCluster class, representing a collection of Node objects.
+ * A NodeCluster is identified by a unique ID and collects multiple Node object pointers into a single entity.
+ */
 class NodeCluster {
 public:
     /**
@@ -42,7 +39,7 @@ public:
     void printCluster() const;
 
 private:
-    unique_ptr<list<shared_ptr<Node>>> _nodes; ///< Dynamically allocated list of nodes in the cluster.
+    unique_ptr<list<shared_ptr<Node>>> _nodes; ///< List of nodes of the cluster.
     unsigned int _id; ///< Unique identifier for the cluster.
 };
 

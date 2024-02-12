@@ -1,15 +1,6 @@
 //
 // Created by hal9000 on 1/30/24.
 //
-/**
- * @file NodeCloudFactory.h
- * @brief Factory class for creating instances of NodeCloud.
- *
- * NodeCloudFactory offers a set of static methods to generate NodeCloud objects, which are collections
- * of Node objects representing points in n-dimensional space. This factory enables the creation of
- * NodeClouds from predefined sets of coordinates or through random generation within specified domains.
- * It supports multithreading for efficient parallel generation of large numbers of nodes.
- */
 
 #ifndef ALTAIRINTERVIEW_NODECLOUDFACTORY_H
 #define ALTAIRINTERVIEW_NODECLOUDFACTORY_H
@@ -34,8 +25,7 @@ public:
      * @brief Creates a NodeCloud from a list of coordinate vectors.
      *
      * Constructs a NodeCloud by iterating over a list of coordinate vectors, where each vector
-     * represents the coordinates of a Node in n-dimensional space. This method ensures that all
-     * nodes in the resulting NodeCloud have unique coordinates and consistent dimensions.
+     * represents the coordinates of a Node in n-dimensional space. 
      *
      * @param coordinatesList A list of vectors, each representing the n-dimensional coordinates of a Node.
      * @return unique_ptr<NodeCloud> A unique pointer to the created NodeCloud, populated with Nodes
@@ -48,16 +38,15 @@ public:
     /**
      * @brief Creates a NodeCloud with nodes randomly distributed within a specified multidimensional domain.
      *
-     * This method generates a specified number of nodes, each with coordinates randomly
-     * distributed within the bounds of a given multidimensional domain.
-     * The method utilizes a uniform distribution for random number generation in each dimension, ensuring each
-     * point within the domain bounds has an equal probability of being selected.
+     * Generates a specified number of nodes, each with coordinates randomly distributed within the bounds of a
+     * given multidimensional domain by utilizing a uniform distribution for random number generation in each
+     * dimension
      *
-     * Multithreading can be employed with each thread operating independently using its own random number generator,
-     * ensuring thread safety and reducing the risk of generating correlated random sequences across threads
+     * Multithreading can be employed with each thread operating independently using its own random number generator
+
      *
      * @param dimensionsLengths A vector specifying the length of the domain in each dimension, defining
-     *                          the bounds within which node coordinates will be randomly generated.
+     *                          the bounds of the domain
      * @param numberOfNodes The total number of nodes to generate.
      * @param availableThreads (optional) The number of threads to use for node generation, with a default of 1.
      * @return unique_ptr<NodeCloud> A unique pointer to the created NodeCloud, containing the randomly generated nodes.
@@ -83,7 +72,6 @@ private:
     static void _checkRandomDomainInput(const std::vector<double>& dimensionsLengths, unsigned int numberOfNodes,
                                         unsigned int availableThreads);
 
-    // Additional methods and member variables can be documented here as needed.
 };
 
 #endif // ALTAIRINTERVIEW_NODECLOUDFACTORY_H

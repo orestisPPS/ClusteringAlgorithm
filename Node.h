@@ -35,17 +35,17 @@ public:
      * @details Provides read-only access to the node's coordinates vector. This method ensures that
      * the coordinates can be accessed efficiently while maintaining the integrity of the node's data.
      */
-    const std::vector<double>& getCoordinatesVector() const;
+    const vector<double>& getCoordinatesVector() const;
 
     /**
      * @brief Sets the coordinates vector for the node.
      * @param coordinates A unique pointer to the new coordinates vector.
-     * @throws std::runtime_error if the input coordinates are null.
+     * @throws runtime_error if the input coordinates are null.
      * @details Allows the assignment of a new coordinates vector to the node, replacing any existing
      * coordinates. This method ensures that the node's position can be updated while maintaining
      * the integrity of the data.
      */
-    void setCoordinatesVector(std::unique_ptr<std::vector<double>> coordinates);
+    void setCoordinatesVector(unique_ptr<vector<double>> coordinates);
 
 private:
     /** 
@@ -53,7 +53,7 @@ private:
      * @details This unique pointer manages the coordinates of the node, ensuring proper memory
      * management and encapsulation of the node's position data.
      */
-    std::unique_ptr<std::vector<double>> _coordinates;
+    unique_ptr<vector<double>> _coordinates;
 
     /** 
      * @brief The unique identifier of the node, assigned at construction.

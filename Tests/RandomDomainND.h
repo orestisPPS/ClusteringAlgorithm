@@ -18,6 +18,16 @@ public:
         _name = "Random Domain " + to_string(_dimensions) + "D";
     }
 
+    /**
+     * @brief Tests the creation of a NodeCloud with random nodes in a domain of a given number of dimensions with length 1.
+     * The test checks the following:
+     * 1. The number of nodes is not 0 or different from the expected number of nodes.
+     * 2. The length of all nodal coordinate vectors is the same.
+     * 3. All nodes are within the domain boundaries.
+     * 4. The number of clusters is as expected for a given radius. For sufficiently large clouds, the number of clusters
+     *    should be 1 for a unit radius and 0 for a radius of 0.
+     * @note Passes if all checks are successful and fails otherwise.
+     */
     void run() override{
         _consoleTestStart();
         // Define the length of each dimension of the domain, in this case a unit square
@@ -39,11 +49,17 @@ public:
             _passed = false;
         _consoleTestEnd();
     }
-    
+        
 private:
     
     unsigned _dimensions;
-    
+
+    /**
+     * @brief Checks if the number of nodes is not 0 or different from the expected number of nodes.
+     * @param nodeCloud NodeCloud to be checked.
+     * @param expectedSize Expected number of nodes.
+     * @return True if the number of nodes in the NodeCloud is as expected, false otherwise.
+     */
     static bool _checkNodeVectorSize(const unique_ptr<NodeCloud>& nodeCloud, unsigned expectedSize) {
         auto _accepted = true;
         if (nodeCloud->getNodes().empty()) {
@@ -57,6 +73,11 @@ private:
         return _accepted;
     }
     
+    /**
+     * @brief Checks if the length of all nodal coordinate vectors is the same.
+     * @param nodeCloud NodeCloud to be checked.
+     * @return True if all nodes have the same coordinate length, false otherwise.
+     */
     static bool _checkSameCoordinateLength(const unique_ptr<NodeCloud>& nodeCloud) {
         auto nodes = nodeCloud->getNodes();
         auto commonCoordinateLength = nodes[0]->getCoordinatesVector().size();
@@ -70,6 +91,12 @@ private:
         return true;
     }
     
+    /**
+     * @brief Checks if all nodes are within the domain boundaries.
+     * @param nodeCloud NodeCloud to be checked.
+     * @param domainLengths Lengths of the domain.
+     * @return True if all nodes are within the domain boundaries, false otherwise.
+     */
     static bool _checkNodesInDomain(const unique_ptr<NodeCloud>& nodeCloud, const vector<double>& domainLengths) {
         auto nodes = nodeCloud->getNodes();
         for (auto& node : nodes) {
@@ -85,7 +112,14 @@ private:
         cout << "All nodes are within the domain" << endl;
         return true;
     }
-
+    
+    /**
+     * @brief Checks if the number of clusters is as expected for a given radius.
+     * @param nodeCloud NodeCloud to be checked.
+     * @param radius Radius within which nodes are considered to be in the same cluster.
+     * @param expectedSize Expected number of clusters.
+     * @return True if the number of clusters is as expected, false otherwise.
+     */
     static bool _checkEdgeCaseClusterSize(const unique_ptr<NodeCloud>& nodeCloud, double radius, unsigned expectedSize) {
         auto clusters = nodeCloud->calculateClusters(radius);
         bool accepted = true;
