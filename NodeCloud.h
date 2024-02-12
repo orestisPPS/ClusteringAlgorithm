@@ -91,14 +91,12 @@ private:
     /**
      * @brief Sorts nodes based on their coordinate components to optimize spatial search.
      *
-     * This data structure is a vector of maps, each corresponding to one dimension in the n-dimensional space
-     * of the nodes. It is designed to facilitate efficient spatial sorting by organizing nodes
-     * according to their coordinate values in each dimension allowing for targeted access to subsets
-     * of nodes based on their location in space, significantly bounding the search space within a specified radius
-     * (from O(n^2) to O(n log n) for all nodes).
+     * Vector of maps, each corresponding to one dimension in the n-dimensional space.
+     * It is facilitates spatial sorting by organizing nodes according to their coordinate values in each dimension 
+     * allowing for targeted access to subsets of nodes based on their location in space, significantly bounding
+     * the search space within a specified radius (from O(n^2) to O(n log n) for all nodes).
      * The key of each map is a double representing a specific coordinate component, and the value is a list
      * of shared_ptr to Node, containing all nodes that have this coordinate component in the corresponding dimension.
-     * Significantly reduces the overall complexity of finding neighbours 
      * It is populated during the construction of the NodeCloud and is not modified afterwards.
      */
     unique_ptr<vector<map<double, list<shared_ptr<Node>>>>> _coordinateComponentToNodeMaps;

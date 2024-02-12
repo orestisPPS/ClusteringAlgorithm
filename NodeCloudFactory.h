@@ -14,8 +14,8 @@
 
 /**
     * @class NodeCloudFactory
-    * NodeCloudFactory offers a set of static methods to generate NodeCloud objects, which are collections
-    * of Node objects representing points in n-dimensional space. This factory enables the creation of
+    * Offers a set of static methods to generate NodeCloud objects, which are collections
+    * of Node objects representing points in n-dimensional space. Enables the creation of
     * NodeClouds from predefined sets of coordinates or through random generation within specified domains.
  */
 class NodeCloudFactory {
@@ -59,9 +59,7 @@ public:
 private:
 
     /**
-    * @brief Private helper method to validate input parameters for random NodeCloud generation.
-    *
-    * Validates the input parameters for creating a randomly initialized NodeCloud.
+    * @brief Validates input parameters for random NodeCloud generation.
     *
     * @param dimensionsLengths The lengths of each dimension in the domain.
     * @param numberOfNodes The number of nodes to generate.

@@ -32,8 +32,7 @@ public:
     /**
      * @brief Gets a constant reference to the vector of coordinates.
      * @return const vector<double>& A constant reference to the vector containing the node's coordinates.
-     * @details Provides read-only access to the node's coordinates vector. This method ensures that
-     * the coordinates can be accessed efficiently while maintaining the integrity of the node's data.
+     * @details Provides read-only access to the node's coordinates vector.
      */
     const vector<double>& getCoordinatesVector() const;
 
@@ -42,16 +41,14 @@ public:
      * @param coordinates A unique pointer to the new coordinates vector.
      * @throws runtime_error if the input coordinates are null.
      * @details Allows the assignment of a new coordinates vector to the node, replacing any existing
-     * coordinates. This method ensures that the node's position can be updated while maintaining
-     * the integrity of the data.
+     * coordinates.
      */
     void setCoordinatesVector(unique_ptr<vector<double>> coordinates);
 
 private:
     /** 
      * @brief Unique pointer to the position vector of the node in the n-dimensional space.
-     * @details This unique pointer manages the coordinates of the node, ensuring proper memory
-     * management and encapsulation of the node's position data.
+     * @details This unique pointer manages the coordinates of the node
      */
     unique_ptr<vector<double>> _coordinates;
 
