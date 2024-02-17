@@ -15,20 +15,11 @@ using namespace std;
 class Node {
 public:
     /**
-     * @brief Constructs a new Node object with a given ID.
-     * @param id The unique identifier for the node.
-     * @details This constructor initializes a Node object with a specific ID and initializes an empty position vector.
+     * @brief Constructs a new Node object with the given coordinate vector.
+     * @param coordinates A vector of doubles representing the position of the node in n-dimensional space.
      */
-    explicit Node(unsigned id);
-
-    /**
-     * @brief Gets the ID of the node.
-     * @return unsigned The unique identifier of the node.
-     * @details This method returns the ID assigned to the node at construction, providing a means
-     * to uniquely identify the node.
-     */
-    unsigned getId() const;
-
+    explicit Node(vector<double> coordinates);
+    
     /**
      * @brief Gets a constant reference to the vector of coordinates.
      * @return const vector<double>& A constant reference to the vector containing the node's coordinates.
@@ -36,28 +27,12 @@ public:
      */
     const vector<double>& getCoordinatesVector() const;
 
-    /**
-     * @brief Sets the coordinates vector for the node.
-     * @param coordinates A unique pointer to the new coordinates vector.
-     * @throws runtime_error if the input coordinates are null.
-     * @details Allows the assignment of a new coordinates vector to the node, replacing any existing
-     * coordinates.
-     */
-    void setCoordinatesVector(unique_ptr<vector<double>> coordinates);
-
 private:
     /** 
      * @brief Unique pointer to the position vector of the node in the n-dimensional space.
      * @details This unique pointer manages the coordinates of the node
      */
-    unique_ptr<vector<double>> _coordinates;
-
-    /** 
-     * @brief The unique identifier of the node, assigned at construction.
-     * @details This identifier is used to uniquely distinguish the node within a graph or
-     * spatial data structure.
-     */
-    unsigned _id;
+    vector<double> _coordinates;
 };
 
 #endif // ALTAIRINTERVIEW_NODE_H

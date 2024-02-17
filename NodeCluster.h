@@ -21,9 +21,9 @@ public:
 
     /**
      * @brief Gets the list of nodes in the cluster.
-     * @return A reference to the list of shared_ptr<Node> objects.
+     * @return A reference to the list of Node* objects.
      */
-    list<shared_ptr<Node>>& getNodes() const;
+    list<Node*>& getNodes();
 
     /**
      * @brief Gets the unique ID of the cluster.
@@ -39,7 +39,7 @@ public:
     void printCluster() const;
 
 private:
-    unique_ptr<list<shared_ptr<Node>>> _nodes; ///< List of nodes of the cluster.
+    unique_ptr<list<Node*>> _nodes; ///< List of nodes of the cluster.
     unsigned int _id; ///< Unique identifier for the cluster.
 };
 

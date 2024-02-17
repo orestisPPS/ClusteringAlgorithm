@@ -15,7 +15,7 @@
 
 class NodeCloud {
 public:
-    explicit NodeCloud(unique_ptr<vector<shared_ptr<Node>>> nodesVector);
+    explicit NodeCloud(vector<Node *> nodesVector);
 
     /**
      * @brief Identifies and returns the neighbouring nodes of a given node within a specified radius.
@@ -30,9 +30,9 @@ public:
      *
      * @param node shared_ptr to the node for which neighbours are being sought.
      * @param radius The search radius
-     * @return A list of shared_ptr<Node> objects, each pointing to a neighbour of the input node within the specified radius.
+     * @return A list of Node* objects, each pointing to a neighbour of the input node within the specified radius.
      */
-    list<shared_ptr<Node>> findNeighboursOfNode(const shared_ptr<Node>& node, double radius);
+    list<Node*> findNeighboursOfNode(Node* node, double radius);
 
     /**
     * @brief Calculates clusters of nodes within a specified radius and returns them.
@@ -51,7 +51,7 @@ public:
      * @brief Returns a constant reference to the vector of Node objects.
      * @return A constant reference to the vector of shared pointers to the nodes of the cloud.
      */
-    const vector<shared_ptr<Node>> & getNodes() const;
+    const vector<Node*> & getNodes() const;
 
     ~NodeCloud();
 
@@ -62,7 +62,7 @@ private:
      * @brief Unique pointer to a vector of shared pointers to Node objects.
      * Stores all the pointers to the nodes that represent the cloud.
      */
-    unique_ptr<vector<shared_ptr<Node>>> _nodes;
+    vector<Node*> _nodes;
 
     /**
      * @brief The dimensionality of the n-dimensional space that the cloud occupies.
@@ -76,7 +76,7 @@ private:
      * The key is a shared_ptr to a Node, while the value is a list of shared_ptr to Node, representing the neighbouring nodes.
      * All list values are cleared after each cluster calculation.
      */
-    unique_ptr<unordered_map<shared_ptr<Node>, list<shared_ptr<Node>>>> _nodeToNeighbours;
+    unique_ptr<unordered_map<Node*, list<Node*>>> _nodeToNeighbours;
 
     /**
      * @brief Tracks whether a node has been visited during cluster calculation.
@@ -86,7 +86,7 @@ private:
      * the recursive cluster calculation in order to avoid redundant operations.
      * Each value is reset to false after each cluster calculation.
      */
-    unique_ptr<unordered_map<shared_ptr<Node>, bool>> _visitedNodes;
+    unique_ptr<unordered_map<Node*, bool>> _visitedNodes;
 
     /**
      * @brief Sorts nodes based on their coordinate components to optimize spatial search.
@@ -99,7 +99,7 @@ private:
      * of shared_ptr to Node, containing all nodes that have this coordinate component in the corresponding dimension.
      * It is populated during the construction of the NodeCloud and is not modified afterwards.
      */
-    unique_ptr<vector<map<double, list<shared_ptr<Node>>>>> _coordinateComponentToNodeMaps;
+    unique_ptr<vector<map<double, list<Node*>>>> _coordinateComponentToNodeMaps;
 
     /**
     * @brief Evaluates whether a candidate node is a neighbour of the given node based on the specified radius.
@@ -113,7 +113,7 @@ private:
     * @param filteredNodes A reference to a list of neighbouring nodes.
     * @return bool True if the candidate node is within the specified radius of the given node, false otherwise.
     */
-    bool _assessNeighbour(const shared_ptr<Node>& thisNode, const shared_ptr<Node>& candidateNode, double radius, list<shared_ptr<Node>>& filteredNodes) const;
+    bool _assessNeighbour(Node *thisNode, Node *candidateNode, double radius, list<Node*>& filteredNodes) const;
     
 
     /**
@@ -128,7 +128,7 @@ private:
     * @param radius The radius used to determine neighbours for clustering.
     * @param cluster The cluster object to which discovered nodes are added.
     */
-    void _searchNeighboursRecursively(const shared_ptr<Node> &node, const shared_ptr<NodeCluster> &cluster);
+    void _searchNeighboursRecursively(Node *node, const shared_ptr<NodeCluster> &cluster);
 
 };
 

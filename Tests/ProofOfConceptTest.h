@@ -43,7 +43,7 @@ public:
         // Create a NodeCloud from the list of coordinates
         auto nodeCloud = NodeCloudFactory::createNodeCloud(coordinatesList);
         // Calculate the clusters of the NodeCloud
-        auto clusters = nodeCloud->calculateClusters(1, 1);
+        auto clusters = nodeCloud.calculateClusters(1, 1);
         if (clusters.size() == 1 && clusters.front()->getNodes().size() == 3){
             _passed = true;
         }

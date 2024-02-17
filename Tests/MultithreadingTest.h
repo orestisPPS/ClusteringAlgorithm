@@ -25,7 +25,7 @@ public:
         // Define the length of each dimension of the domain, in this case a unit square
         auto domainLengths = vector<double>{1, 1};
         // Define the number of nodes to be generated
-        unsigned numberOfNodes = 3E3;
+        unsigned numberOfNodes = 10E3;
         unsigned availableThreads = thread::hardware_concurrency();
 
         // Measure the time of initialization and clustering for a single and multiple threads
@@ -63,7 +63,7 @@ public:
             auto initializationTime = chrono::duration_cast<chrono::milliseconds>(end - start);
             
             start = chrono::high_resolution_clock::now();
-            nodeCloud->calculateClusters(1, availableThreads);
+            nodeCloud.calculateClusters(1, availableThreads);
             end = chrono::high_resolution_clock::now();
             auto clusterTime = chrono::duration_cast<chrono::milliseconds>(end - start);
             

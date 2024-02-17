@@ -33,7 +33,7 @@ public:
      * @throws std::runtime_error If any two nodes have identical coordinates or if the coordinate
      *         vectors are of differing lengths, indicating inconsistent dimensions.
      */
-    static unique_ptr<NodeCloud> createNodeCloud(const std::list<std::vector<double>>& coordinatesList);
+    static NodeCloud createNodeCloud(const list<vector<double>> &coordinatesList);
 
     /**
      * @brief Creates a NodeCloud with nodes randomly distributed within a specified multidimensional domain.
@@ -53,7 +53,7 @@ public:
      * @throws std::runtime_error If any parameter is invalid, such as non-positive domain lengths,
      *         zero number of nodes, or an inappropriate number of threads.
      */
-    static unique_ptr<NodeCloud> createNodeCloud(const vector<double> &dimensionsLengths, unsigned numberOfNodes, unsigned availableThreads = 1);
+    static NodeCloud createNodeCloud(const vector<double> &dimensionsLengths, unsigned numberOfNodes, unsigned availableThreads = 1);
 
 
 private:

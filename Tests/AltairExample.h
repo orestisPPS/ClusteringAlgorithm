@@ -43,7 +43,7 @@ public:
         
         // Calculate the clusters of the NodeCloud for each length scale
         for (auto lengthScale : lengthScales) {
-            auto cluster = nodeCloud->calculateClusters(lengthScale, 1);
+            auto cluster = nodeCloud.calculateClusters(lengthScale, 1);
             _passed = cluster.size() == expectedClusters.front();
             cout << "Length Scale : " << lengthScale << " Calculated Cluster size : " << cluster.size() 
                  << " Expected Cluster size : " << expectedClusters.front() << endl;

@@ -5,17 +5,17 @@
 #include "NodeCloud.h"
 
 
-NodeCloud::NodeCloud(unique_ptr<vector<shared_ptr<Node>>> nodesVector) {
-    if (nodesVector->empty())
+NodeCloud::NodeCloud(vector<Node *> nodesVector) {
+    if (nodesVector.empty())
         throw runtime_error("NodeCloud cannot be created with an empty node vector");
     _nodes = std::move(nodesVector);
-    _dimensions = (*_nodes)[0]->getCoordinatesVector().size();
-    _nodeToNeighbours = make_unique<unordered_map<shared_ptr<Node>, list<shared_ptr<Node>>>>(_nodes->size());
-    _coordinateComponentToNodeMaps = make_unique<vector<map<double, list<shared_ptr<Node>>>>>(_dimensions);
-    _visitedNodes = make_unique<unordered_map<shared_ptr<Node>, bool>>();
-    for (auto &node: *_nodes){
+    _dimensions = _nodes[0]->getCoordinatesVector().size();
+    _nodeToNeighbours = make_unique<unordered_map<Node*, list<Node*>>>(_nodes.size());
+    _coordinateComponentToNodeMaps = make_unique<vector<map<double, list<Node*>>>>(_dimensions);
+    _visitedNodes = make_unique<unordered_map<Node*, bool>>();
+    for (auto &node: _nodes){
         _visitedNodes->insert({node, false});
-        _nodeToNeighbours->insert({node, list<shared_ptr<Node>>()});
+        _nodeToNeighbours->insert({node, list<Node*>()});
         auto coordinates = node->getCoordinatesVector();
         for (unsigned i = 0; i < _dimensions; i++)
             (*_coordinateComponentToNodeMaps)[i][coordinates[i]].push_back(node);
@@ -23,22 +23,18 @@ NodeCloud::NodeCloud(unique_ptr<vector<shared_ptr<Node>>> nodesVector) {
 }
 
 NodeCloud::~NodeCloud() {
-    if (_nodes != nullptr)
-        _nodes.reset();
-    if (_nodeToNeighbours != nullptr)
-        _nodeToNeighbours.reset();
-    if (_coordinateComponentToNodeMaps != nullptr)
-        _coordinateComponentToNodeMaps.reset();
+    for (auto &node: _nodes)
+        delete node;
 }
 
-const vector<shared_ptr<Node>> &NodeCloud::getNodes() const {
-    return *_nodes;
+const vector<Node*> &NodeCloud::getNodes() const {
+    return _nodes;
 }
 
-list<shared_ptr<Node>> NodeCloud::findNeighboursOfNode(const shared_ptr<Node>& node, double radius) {
-    auto candidateNodeCounter = make_unique<unordered_map<shared_ptr<Node>, unsigned>>();
+list<Node*> NodeCloud::findNeighboursOfNode(Node* node, double radius) {
+    auto candidateNodeCounter = make_unique<unordered_map<Node*, unsigned>>();
     auto thisCoordinates = node->getCoordinatesVector();
-    auto filteredNodes = make_shared<list<shared_ptr<Node>>>();
+    auto filteredNodes = make_shared<list<Node*>>();
     for (unsigned i = 0; i < _dimensions; i++) {
         //Find the range of nodal coordinate components i that could be within the radius of node at dimension i
         auto lowerBound = (*_coordinateComponentToNodeMaps)[i].lower_bound(thisCoordinates[i] - radius);
@@ -69,14 +65,14 @@ list<shared_ptr<NodeCluster>> NodeCloud::calculateClusters(double radius, unsign
 
     auto neighbourFindThreadJob = [this, radius](unsigned start, unsigned end) {
         for (auto i = start; i < end; i++) {
-            auto thisNode = (*_nodes)[i];
+            auto thisNode = _nodes[i];
             (*_nodeToNeighbours)[thisNode] = std::move(findNeighboursOfNode(thisNode, radius));
         }
     };
-    ThreadingOperations<shared_ptr<Node>>::executeParallelJob(neighbourFindThreadJob, _nodes->size(), availableThreads);
+    ThreadingOperations<Node*>::executeParallelJob(neighbourFindThreadJob, _nodes.size(), availableThreads);
 
     unsigned clusterId = 0;
-    for (auto &thisNode : *_nodes) {
+    for (auto &thisNode : _nodes) {
         if (!(*_visitedNodes)[thisNode]) {
             auto cluster = make_shared<NodeCluster>(clusterId);
             clusterId++;
@@ -87,28 +83,29 @@ list<shared_ptr<NodeCluster>> NodeCloud::calculateClusters(double radius, unsign
     
     auto clearUnorderedMap = [&](unsigned start, unsigned end){
         for (auto i = start; i < end; i++) {
-            (*_visitedNodes)[(*_nodes)[i]] = false;
-            (*_nodeToNeighbours)[(*_nodes)[i]].clear();
+            (*_visitedNodes)[_nodes[i]] = false;
+            (*_nodeToNeighbours)[_nodes[i]].clear();
         }
     };
-    ThreadingOperations<shared_ptr<Node>>::executeParallelJob(clearUnorderedMap, _nodes->size(), availableThreads);
+    ThreadingOperations<Node*>::executeParallelJob(clearUnorderedMap, _nodes.size(), availableThreads);
     return std::move(clusters);
 }
 
-bool NodeCloud::_assessNeighbour(const shared_ptr<Node> &thisNode, const shared_ptr<Node> &candidateNode, double radius,
-                                 list<shared_ptr<Node>> &filteredNodes) const {
+bool NodeCloud::_assessNeighbour(Node *thisNode, Node *candidateNode, double radius,
+                                 list<Node*> &filteredNodes) const {
     auto &thisCoordinates = thisNode->getCoordinatesVector();
     auto &candidateCoordinates = candidateNode->getCoordinatesVector();
     double distance = 0;
 
     for (unsigned j = 0; j < _dimensions; j++)
         distance += (thisCoordinates[j] - candidateCoordinates[j]) * (thisCoordinates[j] - candidateCoordinates[j]);
-    if( sqrt(distance) <= radius)
+    if(sqrt(distance) <= radius)
+    //if( distance <= radius * radius)
         return true;
     return false;
 }
 
-void NodeCloud::_searchNeighboursRecursively(const shared_ptr<Node> &node, const shared_ptr<NodeCluster> &cluster) {
+void NodeCloud::_searchNeighboursRecursively(Node *node, const shared_ptr<NodeCluster> &cluster) {
     (*_visitedNodes)[node] = true;
     cluster->getNodes().push_back(node);
     for (auto &neighbour: (*_nodeToNeighbours)[node])
