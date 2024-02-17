@@ -4,8 +4,20 @@
 
 #include "NodeCluster.h"
 
-NodeCluster::NodeCluster(unsigned int id) : _id(id), _nodes(make_unique<list<Node*>>()){
+NodeCluster::NodeCluster(unsigned int id) : _id(id), _nodes(new list<Node*>()){}
+
+
+NodeCluster::~NodeCluster() {
+    delete _nodes;
+    _nodes = nullptr;
 }
+
+NodeCluster::NodeCluster(NodeCluster &&other) noexcept {
+    _id = other._id;
+    _nodes = other._nodes;
+    other._nodes = nullptr;
+}
+
 
 list<Node*> & NodeCluster::getNodes(){
     return *_nodes;

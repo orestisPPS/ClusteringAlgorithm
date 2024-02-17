@@ -18,6 +18,12 @@ public:
      * @param id The unique identifier for the cluster.
      */
     explicit NodeCluster(unsigned int id);
+    
+    ~NodeCluster();
+    
+    //Move constructor
+    NodeCluster(NodeCluster&& other) noexcept;
+
 
     /**
      * @brief Gets the list of nodes in the cluster.
@@ -30,16 +36,12 @@ public:
      * @return The cluster's unique ID.
      */
     unsigned int getId() const;
-
-    /**
-     * @brief Prints the details of the cluster to standard output.
-     * 
-     * Iterates over all nodes in the cluster, printing the cluster id and each node's ID. 
-     */
-    void printCluster() const;
+    
 
 private:
-    unique_ptr<list<Node*>> _nodes; ///< List of nodes of the cluster.
+    //list<Node*>* _nodes; ///< List of nodes of the cluster.
+    list<Node*>* _nodes; ///< List of nodes of the cluster.
+
     unsigned int _id; ///< Unique identifier for the cluster.
 };
 

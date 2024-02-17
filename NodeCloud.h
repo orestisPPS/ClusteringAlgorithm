@@ -45,7 +45,7 @@ public:
     * @param availableThreads The number of available threads (default is 1).
     * @return A list of shared_ptr<NodeCluster> objects, each representing a distinct cluster of nodes.
     */
-    list<shared_ptr<NodeCluster>> calculateClusters(double radius, unsigned availableThreads = 1);
+    list<NodeCluster> calculateClusters(double radius, unsigned availableThreads = 1);
     
     /**
      * @brief Returns a constant reference to the vector of Node objects.
@@ -113,7 +113,7 @@ private:
     * @param filteredNodes A reference to a list of neighbouring nodes.
     * @return bool True if the candidate node is within the specified radius of the given node, false otherwise.
     */
-    bool _assessNeighbour(Node *thisNode, Node *candidateNode, double radius, list<Node*>& filteredNodes) const;
+    bool _assessNeighbour(const Node &thisNode, const Node &candidateNode, double radius, list<Node*>& filteredNodes) const;
     
 
     /**
@@ -128,7 +128,7 @@ private:
     * @param radius The radius used to determine neighbours for clustering.
     * @param cluster The cluster object to which discovered nodes are added.
     */
-    void _searchNeighboursRecursively(Node *node, const shared_ptr<NodeCluster> &cluster);
+    void _searchNeighboursRecursively(Node *node, NodeCluster &cluster);
 
 };
 

@@ -44,11 +44,11 @@ public:
         auto nodeCloud = NodeCloudFactory::createNodeCloud(coordinatesList);
         // Calculate the clusters of the NodeCloud
         auto clusters = nodeCloud.calculateClusters(1, 1);
-        if (clusters.size() == 1 && clusters.front()->getNodes().size() == 3){
+        if (clusters.size() == 1 && clusters.front().getNodes().size() == 3){
             _passed = true;
         }
         cout << "Expected number of clusters: 1" << " Calculated number of clusters: " << clusters.size() << endl;
-        cout << "Expected number of nodes in the cluster: 3" << " Calculated number of nodes in the cluster: " << clusters.front()->getNodes().size() << endl;
+        cout << "Expected number of nodes in the cluster: 3" << " Calculated number of nodes in the cluster: " << clusters.front().getNodes().size() << endl;
         _consoleTestEnd();
         for (auto &cluster : clusters) {
             //cluster->printCluster();
