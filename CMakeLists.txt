@@ -4,7 +4,6 @@ project(altairInterview)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(altairInterview main.cpp
-        Node.cpp
         Node.h
         NodeCloud.cpp
         NodeCloud.h
@@ -19,4 +18,5 @@ add_executable(altairInterview main.cpp
         NodeCluster.h
         Tests/RandomDomainND.h
         Tests/MultithreadingTest.h
+        Tests/TemplateNodeCreationTest.h
 )
