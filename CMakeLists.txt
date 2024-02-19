@@ -19,4 +19,5 @@ add_executable(altairInterview main.cpp
         Tests/RandomDomainND.h
         Tests/MultithreadingTest.h
         Tests/TemplateNodeCreationTest.h
+        UnionFind.h
 )

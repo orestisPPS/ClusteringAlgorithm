@@ -14,23 +14,21 @@
 #include "Node.h"
 #include "ThreadingOperations.h"
 #include "NodeCluster.h"
+#include "UnionFind.h"
 
 template <unsigned dimensions>
 struct NodeStatus {
-    NodeStatus() : visited(false), neighbours(list<Node<dimensions>*>()) , clusterId(-1) {}
-
-    bool visited = false;
-
+    NodeStatus() : nodeId(-1), neighbours(list<Node<dimensions>*>()) {}
+    
+    unsigned nodeId;
     list<Node<dimensions>*> neighbours;
-
-    unsigned clusterId = -1;
-
+    
     void reset() {
-        visited = false;
+        nodeId = -1;
         neighbours.clear();
-        clusterId = -1;
     }
 };
+
 
 template<unsigned short dimensions, unsigned numberOfNodes>
 class NodeCloud {
@@ -128,7 +126,7 @@ public:
         return _nodes;
     }
     
-    void findNeighboursOfNode(Node<dimensions>* node, double radius) {
+    void findNeighboursAndUnionSets(Node<dimensions>* node, double radius) {
         
         auto candidateNodeCounter = unordered_map<Node<dimensions>*, unsigned>();
         auto thisCoordinates = node->getCoordinatesVector();
@@ -148,7 +146,7 @@ public:
                     else {
                         auto &timesAppeared = candidateNodeCounter[candidateNode];
                         timesAppeared++;
-                        if (timesAppeared == dimensions && candidateNode != node && _assessNeighbour(node, candidateNode, radius, filteredNodes)) {
+                        if (timesAppeared == dimensions && candidateNode != node && _assessNeighbour(node, candidateNode, radius)) {
                             filteredNodes.push_back(candidateNode);
                         }
                     }
@@ -160,6 +158,7 @@ public:
     list<NodeCluster<dimensions>> calculateClusters(double radius, unsigned availableThreads) {
     
         auto clusters = list<NodeCluster<dimensions>>();
+        auto unionFind = UnionFind<numberOfNodes>();
     
         auto neighbourFindThreadJob = [&](unsigned start, unsigned end) {
             for (auto i = start; i < end; i++)
@@ -198,8 +197,7 @@ private:
     unordered_map<Node<dimensions>*, NodeStatus<dimensions>> _nodeToClusteringStatus;
     
 
-    bool _assessNeighbour(Node<dimensions> *thisNode, Node<dimensions> *candidateNode, double radius,
-                          list<Node<dimensions>*> &filteredNodes) const {
+    bool _assessNeighbour(Node<dimensions> *thisNode, Node<dimensions> *candidateNode, double radius) const {
         auto &thisCoordinates = thisNode->getCoordinatesVector();
         auto &candidateCoordinates = candidateNode->getCoordinatesVector();
         double distance = 0;
