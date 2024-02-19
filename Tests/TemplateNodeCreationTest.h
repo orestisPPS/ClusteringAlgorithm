@@ -20,7 +20,14 @@ public:
         
         // Define the number of nodes to be generated
 
-        auto nodeCloud = NodeCloud<2, 3>({1,1}, 3);
+        //auto nodeCloud = new NodeCloud<2, 30000000>({1,1}, 12);
+        auto nodeCloud = new NodeCloud<2, 100>({1,1}, 1);
+        //for (auto& node : nodeCloud->getNodes())
+            //std::cout << node << std::endl;
+
+        //print the number of nodes with scientific notation
+        //std::cout << std::scientific << nodeCloud->_nodes.size() << std::endl;
+        delete nodeCloud;
     }
 };
 

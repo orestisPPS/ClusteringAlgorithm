@@ -8,10 +8,10 @@
 using namespace std::chrono;
 
 int main() {
-    //ProofOfConceptTest().run();
-    //AltairExample().run();
-    //RandomDomainND(10).run();
-    //MultithreadingTest().run();
-    TemplateNodeCreationTest().run();
+    ProofOfConceptTest().run();
+    AltairExample().run();
+    RandomDomainND<2,10>().run();
+    MultithreadingTest<2,10000>().run();
+    //TemplateNodeCreationTest().run();
     return 0;
 }

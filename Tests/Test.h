@@ -7,7 +7,7 @@
 
 #include <string>
 #include <iostream>
-#include "../NodeCloudFactory.h"
+#include "../NodeCloud.h"
 
 /**
  * @class Test
