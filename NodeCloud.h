@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include <map>
 #include <cmath>
-#include "Node.h"
+#include <mutex>
 #include "ThreadingOperations.h"
 #include "NodeCluster.h"
 #include "UnionFind.h"
@@ -81,9 +81,6 @@ public:
             for (unsigned i = 0; i < numberOfNodes; i++){
                 //_coordinateComponentToNodeMaps[direction][_nodes[i]->getCoordinatesVector()[direction]].push_back(_nodes[i]);
                 _coordinateComponentToNodeMaps[direction][nodalCoordinatesArray[i][direction]].push_back(_nodes[i]);
-
-                if (direction == 0)
-                    _nodeToClusteringStatus[_nodes[i]] = NodeStatus<dimensions>();
             }
         };
         ThreadingOperations<Node<dimensions>*>::executeParallelJob(coordinateToNodeMapJob, dimensions, availableThreads == 1 ? 1 : dimensions);
@@ -107,7 +104,6 @@ public:
              });
         for (unsigned i = 0; i < nodalCoordinatesArray.size(); i++){
             _nodes[i] = new(_blockOfNodes + i * sizeof(Node<dimensions>)) Node<dimensions>(nodalCoordinatesArray[i]);
-            _nodeToClusteringStatus[_nodes[i]] = NodeStatus<dimensions>();
             for (unsigned j = 0; j < dimensions; j++)
                 _coordinateComponentToNodeMaps[j][nodalCoordinatesArray[i][j]].push_back(_nodes[i]);
         }
@@ -126,30 +122,28 @@ public:
         return _nodes;
     }
     
-    void findNeighboursAndUnionSets(Node<dimensions>* node, double radius) {
+    void findNeighboursAndUnionSets(Node<dimensions> *node, double radius, UnionFind<numberOfNodes, Node<dimensions>*> &unionFind) {
         
         auto candidateNodeCounter = unordered_map<Node<dimensions>*, unsigned>();
         auto thisCoordinates = node->getCoordinatesVector();
-        auto& filteredNodes = _nodeToClusteringStatus[node].neighbours;
         for (unsigned i = 0; i < dimensions; i++) {
             //Find the range of nodal coordinate components i that could be within the radius of node at dimension i
             auto lowerBound = _coordinateComponentToNodeMaps[i].lower_bound(thisCoordinates[i] - radius);
             auto upperBound = _coordinateComponentToNodeMaps[i].upper_bound(thisCoordinates[i] + radius);
             bool first = true;
-            //Iterate through the range of coordinate component keys and count the number of times each candidate nodes appear
             for (auto it = lowerBound; it != upperBound; it++) {
                 for (auto &candidateNode: it->second) {
-                    //Appears for the first time
-                    if (candidateNodeCounter.find(candidateNode) == candidateNodeCounter.end())
-                        candidateNodeCounter[candidateNode] = 1;
-                        //Appears for > 1 times
-                    else {
-                        auto &timesAppeared = candidateNodeCounter[candidateNode];
-                        timesAppeared++;
-                        if (timesAppeared == dimensions && candidateNode != node && _assessNeighbour(node, candidateNode, radius)) {
-                            filteredNodes.push_back(candidateNode);
+                    if (candidateNodeCounter.find(candidateNode) != candidateNodeCounter.end()){
+                        auto &counter = candidateNodeCounter[candidateNode];
+                        if (counter == i)
+                            counter++;
+                        if (counter == dimensions && candidateNode != node && _assessNeighbour(node, candidateNode, radius)) {
+                            //lock_guard<mutex> lock(_mutex);
+                            unionFind.unionSets(node, candidateNode);
                         }
                     }
+                    if (candidateNodeCounter.find(candidateNode) == candidateNodeCounter.end() && i == 0)
+                        candidateNodeCounter.insert({candidateNode, 1});
                 }
             }
         }
@@ -158,44 +152,45 @@ public:
     list<NodeCluster<dimensions>> calculateClusters(double radius, unsigned availableThreads) {
     
         auto clusters = list<NodeCluster<dimensions>>();
-        auto unionFind = UnionFind<numberOfNodes>();
+        
+        auto unionFind = UnionFind<numberOfNodes, Node<dimensions>*>(_nodes);
     
         auto neighbourFindThreadJob = [&](unsigned start, unsigned end) {
+            auto neighbours = list<Node<dimensions>*>();
             for (auto i = start; i < end; i++)
-                findNeighboursOfNode(_nodes[i], radius);
+                findNeighboursAndUnionSets(_nodes[i], radius, unionFind);
         };
         ThreadingOperations<Node<dimensions>*>::executeParallelJob(neighbourFindThreadJob, _nodes.size(), availableThreads);
-        cout << "Neighbours found" << endl;
-        unsigned clusterId = 0;
-        for (auto &thisNode : _nodes) {
-            if (!(_nodeToClusteringStatus)[thisNode].visited) {
-                auto cluster = NodeCluster<dimensions>(clusterId);
-                clusterId++;
-                _searchNeighboursRecursively(thisNode, cluster);
-                clusters.push_back(std::move(cluster));
+        
+        auto clusterMap = unordered_map<Node<dimensions>*, list<Node<dimensions>*>>();
+        for (auto &node : _nodes) {
+            auto root = unionFind.find(node);
+            if (clusterMap.find(root) == clusterMap.end()) {
+                auto newCluster = list<Node<dimensions>*>();
+                clusterMap.insert({root, newCluster});
             }
+            // Add the node to the cluster associated with its representative
+            clusterMap[root].push_back(node);
         }
-        cout << "Clusters found" << endl;
-    
-        auto clearUnorderedMap = [&](unsigned start, unsigned end){
-            for (auto i = start; i < end; i++) {
-                _nodeToClusteringStatus[_nodes[i]].reset();
-            }
-        };
-        ThreadingOperations<Node<dimensions>*>::executeParallelJob(clearUnorderedMap, _nodes.size(), availableThreads);
+
+        auto clusterId = 0;
+        for (auto &pair : clusterMap) {
+            clusters.push_back(NodeCluster<dimensions>(clusterId));
+            clusters.front().getNodes() = std::move(pair.second);
+            clusterId++;
+        }
         return clusters;
     }
 
     
 private:
-    char* _blockOfNodes; // Contiguous memory for Node objects
+    char* _blockOfNodes; // Contiguous heap memory for Node objects
 
     array<Node<dimensions>*, numberOfNodes> _nodes; // Array of pointers to Node objects
 
     array<map<double, list<Node<dimensions>*>>, dimensions> _coordinateComponentToNodeMaps;
-
-    unordered_map<Node<dimensions>*, NodeStatus<dimensions>> _nodeToClusteringStatus;
     
+    mutex _mutex;
 
     bool _assessNeighbour(Node<dimensions> *thisNode, Node<dimensions> *candidateNode, double radius) const {
         auto &thisCoordinates = thisNode->getCoordinatesVector();
@@ -208,17 +203,6 @@ private:
             //if( distance <= radius * radius)
             return true;
         return false;
-    }
-
-    void _searchNeighboursRecursively(Node<dimensions> *node, NodeCluster<dimensions> &cluster) {
-        auto& status = _nodeToClusteringStatus[node];
-        if (!status.visited) {
-            status.visited = true;
-            cluster.getNodes().push_back(node);
-            for (auto& neighbour : status.neighbours) {
-                _searchNeighboursRecursively(neighbour, cluster);
-            }
-        }
     }
 };
 
