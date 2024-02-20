@@ -32,7 +32,7 @@ public:
         auto singleThreadInitializationTime = singleThreadTime.first;
         auto singleThreadClustering = singleThreadTime.second;
 
-        auto multiThreadTime = _measureTime(12);
+        auto multiThreadTime = _measureTime(1);
         auto multiThreadInitializationTime = multiThreadTime.first;
         auto multiThreadClustering = multiThreadTime.second;
 

@@ -9,56 +9,43 @@
 #include <stdexcept>
 using namespace std;
 
-
-template<unsigned numberOfNodes, typename T>
+template<unsigned numberOfNodes>
 class UnionFind {
     public:
 
-    explicit UnionFind(const array<T, numberOfNodes> & nodes){
-        static_assert(numberOfNodes > 0, "Invalid number of nodes");
-        // Initialize each element as its own parent and with rank 0
-        _parentsAndRanks= unordered_map<T, pair<T, unsigned>>(numberOfNodes);
+    explicit UnionFind(){
         for (unsigned i = 0; i < numberOfNodes; i++){
-            _parentsAndRanks[nodes[i]] = make_pair(nodes[i], 0);
+            _parents[i] = i;
+            _ranks[i] = 0;
         }
     }
     
-    T find(const T & node){
-        if (_parentsAndRanks.find(node) == _parentsAndRanks.end())
-            throw out_of_range("Node not found");
-        if (_parents(node) != node)
-            _parents(node) = find(_parents(node));
-        return _parents(node);
+    unsigned find(const unsigned & setI){
+        if (setI >= numberOfNodes)
+            throw out_of_range("Index out of range");
+        if (_parents[setI] != setI)
+            _parents[setI] = find(_parents[setI]);
+        return _parents[setI];
     }
 
-    void unionSets(const T &setI, const T &setJ){
-        if (_parentsAndRanks.find(setI) == _parentsAndRanks.end() || _parentsAndRanks.find(setJ) == _parentsAndRanks.end())
-            throw out_of_range("Node not found");
-        T rootI = find(setI);
-        T rootJ = find(setJ);
+    void unionSets(const unsigned &setI, const unsigned &setJ){
+        
+        unsigned rootI = find(setI);
+        unsigned rootJ = find(setJ);
         if (rootI == rootJ)
             return;
-        if (_ranks(rootI) < _ranks(rootJ))
-            _parents(rootI) = rootJ;
-        else if (_ranks(rootI) > _ranks(rootJ))
-            _parents(rootJ) = rootI;
+        if (_ranks[rootI] < _ranks[rootJ])
+            _parents[rootI] = rootJ;
+        else if (_ranks[rootI] > _ranks[rootJ])
+            _parents[rootJ] = rootI;
         else {
-            _parents(rootJ) = rootI;
-            _ranks(rootI)++;
+            _parents[rootJ] = rootI;
+            _ranks[rootI]++;
         }
     }
-    
     private:
-    
-    T & _parents(const T & node){
-        return get<0>(_parentsAndRanks[node]);
-    }
-    
-    unsigned & _ranks(const T & node){
-        return get<1>(_parentsAndRanks[node]);
-    }
-    
-    unordered_map<T, pair<T, unsigned>> _parentsAndRanks;
+    array<unsigned , numberOfNodes> _parents;
+    array<unsigned, numberOfNodes> _ranks;
         
 };
 

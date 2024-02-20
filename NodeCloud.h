@@ -81,6 +81,7 @@ public:
             for (unsigned i = 0; i < numberOfNodes; i++){
                 //_coordinateComponentToNodeMaps[direction][_nodes[i]->getCoordinatesVector()[direction]].push_back(_nodes[i]);
                 _coordinateComponentToNodeMaps[direction][nodalCoordinatesArray[i][direction]].push_back(_nodes[i]);
+                _nodeToId.insert({_nodes[i], i});
             }
         };
         ThreadingOperations<Node<dimensions>*>::executeParallelJob(coordinateToNodeMapJob, dimensions, availableThreads == 1 ? 1 : dimensions);
@@ -122,7 +123,7 @@ public:
         return _nodes;
     }
     
-    void findNeighboursAndUnionSets(Node<dimensions> *node, double radius, UnionFind<numberOfNodes, Node<dimensions>*> &unionFind) {
+    void findNeighboursAndUnionSets(Node<dimensions> *node, double radius, UnionFind<numberOfNodes> &unionFind) {
         
         auto candidateNodeCounter = unordered_map<Node<dimensions>*, unsigned>();
         auto thisCoordinates = node->getCoordinatesVector();
@@ -139,7 +140,7 @@ public:
                             counter++;
                         if (counter == dimensions && candidateNode != node && _assessNeighbour(node, candidateNode, radius)) {
                             //lock_guard<mutex> lock(_mutex);
-                            unionFind.unionSets(node, candidateNode);
+                            unionFind.unionSets(_nodeToId[node], _nodeToId[candidateNode]);
                         }
                     }
                     if (candidateNodeCounter.find(candidateNode) == candidateNodeCounter.end() && i == 0)
@@ -153,7 +154,7 @@ public:
     
         auto clusters = list<NodeCluster<dimensions>>();
         
-        auto unionFind = UnionFind<numberOfNodes, Node<dimensions>*>(_nodes);
+        auto unionFind = UnionFind<numberOfNodes>();
     
         auto neighbourFindThreadJob = [&](unsigned start, unsigned end) {
             auto neighbours = list<Node<dimensions>*>();
@@ -164,7 +165,7 @@ public:
         
         auto clusterMap = unordered_map<Node<dimensions>*, list<Node<dimensions>*>>();
         for (auto &node : _nodes) {
-            auto root = unionFind.find(node);
+            auto root = _nodes[unionFind.find(_nodeToId[node])];
             if (clusterMap.find(root) == clusterMap.end()) {
                 auto newCluster = list<Node<dimensions>*>();
                 clusterMap.insert({root, newCluster});
@@ -190,6 +191,8 @@ private:
 
     array<map<double, list<Node<dimensions>*>>, dimensions> _coordinateComponentToNodeMaps;
     
+    unordered_map<Node<dimensions>*, unsigned> _nodeToId;
+    
     mutex _mutex;
 
     bool _assessNeighbour(Node<dimensions> *thisNode, Node<dimensions> *candidateNode, double radius) const {
@@ -199,8 +202,8 @@ private:
 
         for (unsigned j = 0; j < dimensions; j++)
             distance += (thisCoordinates[j] - candidateCoordinates[j]) * (thisCoordinates[j] - candidateCoordinates[j]);
-        if(sqrt(distance) <= radius)
-            //if( distance <= radius * radius)
+        //if(sqrt(distance) <= radius)
+        if( distance <= radius * radius)
             return true;
         return false;
     }
