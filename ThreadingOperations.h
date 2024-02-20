@@ -56,7 +56,6 @@ public:
             }
             threads.push_back(thread(task, start, end));
         }
-
         for (auto &thread: threads) {
             thread.join();
         }

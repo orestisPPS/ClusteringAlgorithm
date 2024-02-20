@@ -20,4 +20,5 @@ add_executable(altairInterview main.cpp
         Tests/MultithreadingTest.h
         Tests/TemplateNodeCreationTest.h
         UnionFind.h
+        ClusteringAlgorithms/ClusteringAlgorithm.h
 )
