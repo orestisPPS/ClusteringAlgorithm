@@ -61,5 +61,9 @@ public:
             thread.join();
         }
     }
+    
+    constexpr static unsigned getAvailableThreads(){
+        return std::thread::hardware_concurrency();
+    }
 };
 #endif //ALTAIRINTERVIEW_THREADINGOPERATIONS_H

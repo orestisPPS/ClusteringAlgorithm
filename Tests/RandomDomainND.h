@@ -36,11 +36,9 @@ public:
             domainLengths[i] = 1;
         
         // Create a NodeCloud with random nodes
-        auto nodeCloud = NodeCloud<dimensions, numberOfNodes>(domainLengths, 12);
+        auto nodeCloud = NodeCloud<dimensions, numberOfNodes>(domainLengths, 1);
         _passed = true;
         if (!_checkNodeVectorSize(nodeCloud, numberOfNodes))
-            _passed = false;
-        if (!_checkSameCoordinateLength(nodeCloud))
             _passed = false;
         if (!_checkNodesInDomain(nodeCloud, domainLengths))
             _passed = false;
@@ -73,25 +71,7 @@ private:
         cout <<"Expected # of nodes: " << expectedSize << " Calculated # of nodes: " << nodeCloud.getNodes().size() << endl;
         return _accepted;
     }
-
-    /**
-     * @brief Checks if the length of all nodal coordinate vectors is the same.
-     * @param nodeCloud NodeCloud to be checked.
-     * @return True if all nodes have the same coordinate length, false otherwise.
-     */
-    static bool _checkSameCoordinateLength(const NodeCloud<dimensions, numberOfNodes>& nodeCloud) {
-        auto nodes = nodeCloud.getNodes();
-        auto commonCoordinateLength = nodes[0]->getCoordinatesVector().size();
-        for (auto& node : nodes) {
-            if (node->getCoordinatesVector().size() != commonCoordinateLength){
-                cout << "Different coordinate vector lengths detected in the NodeCloud" << endl;
-                return false;
-            }
-        }
-        cout << "All nodal coordinate vectors have the same coordinate length" << endl;
-        return true;
-    }
-
+    
     /**
      * @brief Checks if all nodes are within the domain boundaries.
      * @param nodeCloud NodeCloud to be checked.
@@ -122,7 +102,7 @@ private:
      * @return True if the number of clusters is as expected, false otherwise.
      */
     static bool _checkEdgeCaseClusterSize(NodeCloud<dimensions, numberOfNodes> &nodeCloud, double radius, unsigned expectedSize) {
-        auto clusters = nodeCloud.findClusters(radius, 1);
+        auto clusters = nodeCloud.findClusters(radius, UNION_FIND_BUNCH);
         bool accepted = true;
         if (clusters.size() != expectedSize) {
             accepted = false;

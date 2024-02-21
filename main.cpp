@@ -9,8 +9,8 @@ using namespace std::chrono;
 int main() {
     ProofOfConceptTest().run();
     AltairExample().run();
-    //RandomDomainND<2,10>().run();
-    //MultithreadingTest<3,10000>().run();
+    RandomDomainND<2,10>().run();
+    MultithreadingTest<3,10000>().run();
     //TemplateNodeCreationTest().run();
     return 0;
 }

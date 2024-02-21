@@ -39,18 +39,18 @@ public:
         auto lengthScales = list<double>{0.7, 1.8, 4.8, 6.5, 10.6};
         //Create a list of the expected cluster sizes
         auto expectedClusters = list<unsigned>{5, 4, 3, 2, 1};
-
+        _passed = true;
         // Calculate the clusters of the NodeCloud for each length scale
         for (auto lengthScale : lengthScales) {
-            auto clusters = NodeCloud<2,3>(coordinates, 1).findClusters(lengthScale, UNION_FIND_BUNCH);
-
-            _passed = clusters.size() == expectedClusters.front();
+            auto cloud = NodeCloud<2, 5>(coordinates, 1);
+            auto clusters = cloud.findClusters(lengthScale, UNION_FIND_BUNCH);
+            
+            if (clusters.size() != expectedClusters.front()){
+                _passed = false;
+            }
             cout << "Length Scale : " << lengthScale << " Calculated Cluster size : " << clusters.size() 
                  << " Expected Cluster size : " << expectedClusters.front() << endl;
             expectedClusters.pop_front();
-            for (auto& object : clusters) {
-                //object->printCluster();
-            }
         }
         _consoleTestEnd();
 

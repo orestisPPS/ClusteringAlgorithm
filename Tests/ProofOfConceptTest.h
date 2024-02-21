@@ -41,7 +41,7 @@ public:
             {0, 1}
         }};
         // Create a NodeCloud from the list of coordinates
-        auto clusters = NodeCloud<2,3>(coordinates, 1).findClusters(1, UNION_FIND_BUNCH);
+        auto clusters = NodeCloud<2, 3>(coordinates, 1).findClusters(1, UNION_FIND_BUNCH);
         if (clusters.size() == 1 && clusters.front().getNodes().size() == 3){
             _passed = true;
         }

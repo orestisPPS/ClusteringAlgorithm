@@ -22,9 +22,7 @@ class NodeFactory {
     static void
     createRandomNodes(array<double, dimensions> dimensionsLengths, array<Node<dimensions>*, numberOfNodes>& nodes,
                         char* heapPosition, int sortByDimension, unsigned numberOfThreads) {
-
-        static_assert(sortByDimension < dimensions , "sortByDimension must be less than the number of dimensions");
-
+        
         array<uniform_real_distribution<double>, dimensions> distributionsVector;
         array<array<double, dimensions>, numberOfNodes> nodalCoordinatesArray;
         for (unsigned i = 0; i < dimensions; i++)
@@ -43,7 +41,7 @@ class NodeFactory {
 
         if (sortByDimension >= 0) {
             auto compare = [sortByDimension](const array<double, dimensions> &a, const array<double, dimensions> &b) {
-                return a[sortByDimension] < b[sortByDimension];
+                return a[sortByDimension - 1] < b[sortByDimension - 1];
             };
             sort(nodalCoordinatesArray.begin(), nodalCoordinatesArray.end(), compare);
         }
@@ -53,7 +51,6 @@ class NodeFactory {
                 nodes[i] = new(heapPosition + i * sizeof(Node<dimensions>)) Node<dimensions>(std::move(nodalCoordinatesArray[i]));
         };
         ThreadingOperations<double>::executeParallelJob(nodeInitializationJob, numberOfNodes, numberOfThreads);
-        return std::move(nodes);
     }
 
     static void
@@ -61,7 +58,7 @@ class NodeFactory {
                                     char* heapPosition, int sortByDimension, unsigned numberOfThreads) {
         if (sortByDimension  >= 0) {
             auto compare = [sortByDimension](const array<double, dimensions> &a, const array<double, dimensions> &b) {
-                return a[sortByDimension] < b[sortByDimension];
+                return a[sortByDimension - 1] < b[sortByDimension - 1];
             };
             coordinates.sort(compare); // Corrected sort call for std::list
         }
