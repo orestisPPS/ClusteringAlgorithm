@@ -21,13 +21,13 @@ public:
         }
     }
 
-    list<NodeCluster<dimensions>> findClusters(double radius, unsigned availableThreads) override {
+    list<Cluster<dimensions>> findClusters(double radius, unsigned availableThreads) override {
         auto clusterId = 0;
         auto clusters = list<Node<dimensions> *>();
         
         for (auto &node : this->_nodes) {
             if (_nodeToClusterIdMap[node] == -1) {
-                auto cluster = NodeCluster<dimensions>(clusterId);
+                auto cluster = Cluster<dimensions>(clusterId);
                 _nodeToClusterIdMap[node] = clusterId;
                 _nodeToClusterNodesMap[node].push_back(node);
             }

@@ -14,45 +14,55 @@ public:
              UnionFindClustering<dimensions, numberOfNodes>(nodes) {
     }
     
-    list<NodeCluster<dimensions>> findClusters(double radius, unsigned availableThreads) override {
-        auto nodeToNeighboursMap = unordered_map<Node<dimensions>*, list<Node<dimensions>*>>(numberOfNodes);
+    ~UnionFindBunchClustering() = default;
+    
+    list<Cluster<Node<dimensions> *>> findClusters(double radius, unsigned availableThreads) override {
+
+
+        auto nodeToClusterMap = unordered_map<Node<dimensions>*, list<Node<dimensions>*>>(numberOfNodes);
         for (auto &node: this->_nodes)
-            nodeToNeighboursMap[node] = list<Node<dimensions>*>();
-        
-        auto _neighbourJob = [&](Node<dimensions> *thisNode, Node<dimensions> *candidateNode){
-            nodeToNeighboursMap[thisNode].push_back(candidateNode);
-        };
+            nodeToClusterMap[node] = list<Node<dimensions>*>();
+
         auto threadJob = [&](unsigned start, unsigned end){
             for (unsigned i = start; i < end; i++)
-                this->_findNeighboursWithMapBounds(this->_nodes[i], radius, _neighbourJob);
+                this->_findNeighboursWithMapBounds(this->_nodes[i], radius);
         };
         ThreadingOperations<void>::executeParallelJob(threadJob, numberOfNodes, availableThreads);
-        
-        for (auto &pair : nodeToNeighboursMap) {
+
+        for (auto &pair : this->_nodeToNeighboursMap) {
             auto thisNode = pair.first;
             for (auto &candidateNode : pair.second) {
                 this->_unionFind.unionSets(this->_nodeToId[thisNode], this->_nodeToId[candidateNode]);
             }
         }
+        
         for (auto &node : this->_nodes) {
             auto root = this->_nodes[this->_unionFind.find(this->_nodeToId[node])];
-            if (this->_nodeToClusterMap.find(root) == this->_nodeToClusterMap.end()) {
+            if (nodeToClusterMap.find(root) == nodeToClusterMap.end()) {
                 auto newCluster = list<Node<dimensions>*>();
-                this->_nodeToClusterMap.insert({root, newCluster});
+                nodeToClusterMap.insert({root, newCluster});
             }
-            this->_nodeToClusterMap[root].push_back(node);      
+            nodeToClusterMap[root].push_back(node);
         }
-        nodeToNeighboursMap.clear();
+        
 
         auto clusterId = 0;
-        auto clusters = list<NodeCluster<dimensions>>();
-        for (auto &pair : this->_nodeToClusterMap) {
-            auto cluster = NodeCluster<dimensions>(clusterId);
-            cluster.getNodes() = std::move(pair.second);
+        auto clusters = list<Cluster<Node<dimensions>*>>();
+        for (auto &pair : nodeToClusterMap) {
+            auto cluster = Cluster<Node<dimensions>*>(clusterId);
+            cluster.getList() = std::move(pair.second);
             clusters.push_back(std::move(cluster));
             clusterId++;
         }
+        for (auto &node : this->_nodes){
+            this->_nodeToNeighboursMap[node].clear();
+        }
         return clusters;
+    }
+    
+protected:
+    void _neighbourJob(Node<dimensions> *thisNode, Node<dimensions> *candidateNode) override {
+        this->_nodeToNeighboursMap[thisNode].push_back(candidateNode);
     }
     
 };

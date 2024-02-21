@@ -57,14 +57,14 @@ public:
          */
         static pair<chrono::duration<double>, chrono::duration<double>> _measureTime(unsigned availableThreads) {
             auto start = chrono::high_resolution_clock::now();
-            auto nodeCloud = NodeCloud<dimensions, numberOfNodes>({1,1}, availableThreads, 0);
+            auto nodeCloud = NodeCloud<dimensions, numberOfNodes>({1,1}, availableThreads);
             auto end = chrono::high_resolution_clock::now();
             auto initializationTime = chrono::duration_cast<chrono::duration<double>>(end - start);
 
             cout << "NodeCloud with " << numberOfNodes << " nodes and " << availableThreads << " threads created" << endl;
 
             start = chrono::high_resolution_clock::now();
-            auto clusters = nodeCloud.findClusters(1, UNION_FIND_PER_NODE);
+            auto clusters = nodeCloud.findClusters(1, DEPTH_FIRST_SEARCH);
             end = chrono::high_resolution_clock::now();
             auto clusterTime = chrono::duration_cast<chrono::duration<double>>(end - start);
 

@@ -5,7 +5,7 @@
 #ifndef ALTAIRINTERVIEW_CLUSTERINGALGORITHM_H
 #define ALTAIRINTERVIEW_CLUSTERINGALGORITHM_H
 
-#include "../NodeCluster.h"
+#include "../Cluster.h"
 #include "../ThreadingOperations.h"
 #include "../UnionFind.h"
 #include <map>
@@ -22,9 +22,8 @@ template<unsigned dimensions, unsigned numberOfNodes>
 class ClusteringAlgorithm {
 public:
     
-    virtual list<NodeCluster<dimensions>> findClusters(double radius, unsigned availableThreads) = 0;
+    virtual list<Cluster<Node<dimensions> *>> findClusters(double radius, unsigned availableThreads) = 0;
     
-
 protected:
     explicit ClusteringAlgorithm(const array<Node<dimensions>*, numberOfNodes> &nodes) : _nodes(nodes){}
 
@@ -33,9 +32,12 @@ protected:
     const array<Node<dimensions>*, numberOfNodes>& _nodes;
 
     array<map<double, list<Node<dimensions>*>>, dimensions> _coordinateComponentToNodeMaps;
+    
+    unordered_map<Node<dimensions>*, list<Node<dimensions>*>> _nodeToNeighboursMap;
 
-    template<typename NeighbourJob>
-    void _findNeighboursWithMapBounds(Node<dimensions> *node, double radius, NeighbourJob neighbourJob) {
+    virtual void _neighbourJob(Node<dimensions> *thisNode, Node<dimensions> *candidateNode) = 0;
+
+    void _findNeighboursWithMapBounds(Node<dimensions> *node, double radius) {
 
         auto candidateNodeCounter = unordered_map<Node<dimensions>*, unsigned>();
         auto thisCoordinates = node->getCoordinatesVector();
@@ -54,7 +56,7 @@ protected:
                         auto &timesAppeared = candidateNodeCounter[candidateNode];
                         timesAppeared++;
                         if (timesAppeared == dimensions && candidateNode != node && node->sumOfSquaresFrom(*candidateNode) <= radiusSquared) {
-                            neighbourJob(node, candidateNode);
+                            _neighbourJob(node, candidateNode);
                         }
                     }
                 }

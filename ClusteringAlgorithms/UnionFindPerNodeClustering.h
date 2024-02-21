@@ -14,46 +14,55 @@ public:
              UnionFindClustering<dimensions, numberOfNodes>(nodes) {
     }
     
-    list<NodeCluster<dimensions>> findClusters(double radius, unsigned availableThreads) override {
-        
-        
-        auto _neighbourJob = [&](Node<dimensions> *thisNode, Node<dimensions> *candidateNode){
-            this->_unionFind.unionSets(this->_nodeToId[thisNode], this->_nodeToId[candidateNode]);
-        };
-        if (availableThreads != 1){
-            auto threadJob = [&](unsigned start, unsigned end){
-                for (unsigned i = start; i < end; i++){
-                    //apply mutex to the union find
+    ~UnionFindPerNodeClustering() = default;
+    
+    list<Cluster<Node<dimensions> *>> findClusters(double radius, unsigned availableThreads) override {
+
+        auto threadJob = [&](unsigned start, unsigned end){
+            for (unsigned i = start; i < end; i++){
+                //apply mutex to the union find
+                this->_findNeighboursWithMapBounds(this->_nodes[i], radius);
+                if (availableThreads > 1){
                     std::lock_guard<std::mutex> lock(this->_unionFindMutex);
-                    this->_findNeighboursWithMapBounds(this->_nodes[i], radius, _neighbourJob);
+                    for (auto &candidateNode : this->_nodeToNeighboursMap[this->_nodes[i]]) {
+                        this->_unionFind.unionSets(this->_nodeToId[this->_nodes[i]], this->_nodeToId[candidateNode]);
+                    }
                 }
-            };
-            ThreadingOperations<void>::executeParallelJob(threadJob, numberOfNodes, availableThreads);
-        }
-        if (availableThreads == 1){
-            for (unsigned i = 0; i < numberOfNodes; i++){
-                this->_findNeighboursWithMapBounds(this->_nodes[i], radius, _neighbourJob);
+                else{
+                    for (auto &candidateNode : this->_nodeToNeighboursMap[this->_nodes[i]]) {
+                        this->_unionFind.unionSets(this->_nodeToId[this->_nodes[i]], this->_nodeToId[candidateNode]);
+                    }
+                }
             }
-        }
+        };
+        ThreadingOperations<void>::executeParallelJob(threadJob, numberOfNodes, availableThreads);
         
         for (auto &node : this->_nodes) {
             auto root = this->_nodes[this->_unionFind.find(this->_nodeToId[node])];
-            if (this->_nodeToClusterMap.find(root) == this->_nodeToClusterMap.end()) {
+            if (this->_nodeToNeighboursMap.find(root) == this->_nodeToNeighboursMap.end()) {
                 auto newCluster = list<Node<dimensions>*>();
-                this->_nodeToClusterMap.insert({root, newCluster});
+                this->_nodeToNeighboursMap.insert({root, newCluster});
             }
-            this->_nodeToClusterMap[root].push_back(node);      
+            this->_nodeToNeighboursMap[root].push_back(node);      
         }
 
         auto clusterId = 0;
-        auto clusters = list<NodeCluster<dimensions>>();
-        for (auto &pair : this->_nodeToClusterMap) {
-            auto cluster = NodeCluster<dimensions>(clusterId);
-            cluster.getNodes() = std::move(pair.second);
+        auto clusters = list<Cluster<Node<dimensions> *>>();
+        for (auto &pair : this->_nodeToNeighboursMap) {
+            auto cluster = Cluster<Node<dimensions> *>(clusterId);
+            cluster.getList() = std::move(pair.second);
             clusters.push_back(std::move(cluster));
             clusterId++;
         }
         return clusters;
     }
+
+protected:
+    void _neighbourJob(Node<dimensions> *thisNode, Node<dimensions> *candidateNode) override {
+        this->_nodeToNeighboursMap[thisNode].push_back(candidateNode);
+        //            this->_unionFind.unionSets(this->_nodeToId[thisNode], this->_nodeToId[candidateNode]);
+
+    }
+    
 };
 #endif //ALTAIRINTERVIEW_UNIONFINDPERNODECLUSTERING_H

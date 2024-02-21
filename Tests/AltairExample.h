@@ -43,7 +43,7 @@ public:
         // Calculate the clusters of the NodeCloud for each length scale
         for (auto lengthScale : lengthScales) {
             auto cloud = NodeCloud<2, 5>(coordinates, 1);
-            auto clusters = cloud.findClusters(lengthScale, UNION_FIND_BUNCH);
+            auto clusters = cloud.findClusters(lengthScale, DEPTH_FIRST_SEARCH);
             
             if (clusters.size() != expectedClusters.front()){
                 _passed = false;

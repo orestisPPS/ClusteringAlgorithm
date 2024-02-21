@@ -11,7 +11,7 @@
 #include <cmath>
 #include <mutex>
 #include "NodeFactory.h"
-#include "NodeCluster.h"
+#include "Cluster.h"
 #include "ClusteringAlgorithms/UnionFindBunchClustering.h"
 #include "ClusteringAlgorithms/UnionFindPerNodeClustering.h"
 #include "ClusteringAlgorithms/DepthFirstSearchClustering.h"
@@ -48,7 +48,7 @@ public:
         return _nodes;
     }
     
-    list<NodeCluster<dimensions>> findClusters(double radius, ClusteringAlgorithmType algorithm) {
+    list<Cluster<Node<dimensions> *>> findClusters(double radius, ClusteringAlgorithmType algorithm) {
         switch (algorithm) {
             case ClusteringAlgorithmType::UNION_FIND_PER_NODE:
                 return std::move(UnionFindPerNodeClustering<dimensions, numberOfNodes>(_nodes).findClusters(radius, _availableThreads));
