@@ -32,7 +32,7 @@ public:
         auto singleThreadInitializationTime = singleThreadTime.first;
         auto singleThreadClustering = singleThreadTime.second;
 
-        auto multiThreadTime = _measureTime(1);
+        auto multiThreadTime = _measureTime(availableThreads);
         auto multiThreadInitializationTime = multiThreadTime.first;
         auto multiThreadClustering = multiThreadTime.second;
 
@@ -57,17 +57,15 @@ public:
          */
         static pair<chrono::duration<double>, chrono::duration<double>> _measureTime(unsigned availableThreads) {
             auto start = chrono::high_resolution_clock::now();
-            auto nodeCloud = NodeCloud<dimensions, numberOfNodes>({1,1}, availableThreads);
+            auto nodeCloud = NodeCloud<dimensions, numberOfNodes>({1,1}, availableThreads, 0);
             auto end = chrono::high_resolution_clock::now();
-            //auto initializationTime = chrono::duration_cast<chrono::seconds>(end - start);
             auto initializationTime = chrono::duration_cast<chrono::duration<double>>(end - start);
 
             cout << "NodeCloud with " << numberOfNodes << " nodes and " << availableThreads << " threads created" << endl;
 
             start = chrono::high_resolution_clock::now();
-            auto clusters = nodeCloud.findClusters(1, UNION_FIND_BUNCH);
+            auto clusters = nodeCloud.findClusters(1, UNION_FIND_PER_NODE);
             end = chrono::high_resolution_clock::now();
-            //auto clusterTime = chrono::duration_cast<chrono::seconds>(end - start);
             auto clusterTime = chrono::duration_cast<chrono::duration<double>>(end - start);
 
             cout << "NodeCloud with " << numberOfNodes << " nodes and " << availableThreads << "clustered" << endl;

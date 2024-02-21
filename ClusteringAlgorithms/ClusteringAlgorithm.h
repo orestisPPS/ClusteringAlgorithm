@@ -39,6 +39,7 @@ protected:
 
         auto candidateNodeCounter = unordered_map<Node<dimensions>*, unsigned>();
         auto thisCoordinates = node->getCoordinatesVector();
+        auto radiusSquared = radius * radius;
         for (unsigned i = 0; i < dimensions; i++) {
             //Find the range of nodal coordinate components i that could be within the radius of node at dimension i
             auto lowerBound = _coordinateComponentToNodeMaps[i].lower_bound(thisCoordinates[i] - radius);
@@ -46,18 +47,16 @@ protected:
             bool first = true;
             for (auto it = lowerBound; it != upperBound; it++) {
                 for (auto &candidateNode: it->second) {
-                    if (candidateNodeCounter.find(candidateNode) != candidateNodeCounter.end()){
-                        auto &counter = candidateNodeCounter[candidateNode];
-                        if (counter == i)
-                            counter++;
-                        if (counter == dimensions && candidateNode != node &&
-                                node->sumOfSquaresFrom(*candidateNode) <= radius * radius) {
-                            auto candidatePtr = candidateNode;
-                            neighbourJob(node, candidatePtr);
+
+                    if (candidateNodeCounter.find(candidateNode) == candidateNodeCounter.end())
+                        candidateNodeCounter[candidateNode] = 1;
+                    else {
+                        auto &timesAppeared = candidateNodeCounter[candidateNode];
+                        timesAppeared++;
+                        if (timesAppeared == dimensions && candidateNode != node && node->sumOfSquaresFrom(*candidateNode) <= radiusSquared) {
+                            neighbourJob(node, candidateNode);
                         }
                     }
-                    if (candidateNodeCounter.find(candidateNode) == candidateNodeCounter.end() && i == 0)
-                        candidateNodeCounter.insert({candidateNode, 1});
                 }
             }
         }

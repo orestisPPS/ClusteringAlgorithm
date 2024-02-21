@@ -20,4 +20,6 @@ add_executable(altairInterview main.cpp
         ClusteringAlgorithms/UnionFindBunchClustering.h
         ClusteringAlgorithms/UnionFindClustering.h
         ClusteringAlgorithms/UnionFindPerNodeClustering.h
+        ClusteringAlgorithms/DepthFirstSearchClustering.h
+        ClusteringAlgorithms/ImmediateClustering.h
 )

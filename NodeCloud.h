@@ -14,6 +14,7 @@
 #include "NodeCluster.h"
 #include "ClusteringAlgorithms/UnionFindBunchClustering.h"
 #include "ClusteringAlgorithms/UnionFindPerNodeClustering.h"
+#include "ClusteringAlgorithms/DepthFirstSearchClustering.h"
 
 template<unsigned short dimensions, unsigned numberOfNodes>
 class NodeCloud {
@@ -53,8 +54,10 @@ public:
                 return std::move(UnionFindPerNodeClustering<dimensions, numberOfNodes>(_nodes).findClusters(radius, _availableThreads));
             case UNION_FIND_BUNCH:
                 return std::move(UnionFindBunchClustering<dimensions, numberOfNodes>(_nodes).findClusters(radius, _availableThreads));
+            case DEPTH_FIRST_SEARCH:
+                return std::move(DepthFirstSearchClustering<dimensions, numberOfNodes>(_nodes).findClusters(radius, _availableThreads));
             default:
-                throw std::invalid_argument("Invalid clustering algorithm type");
+                throw std::invalid_argument("Invalid algorithm type");
         }
     }
     

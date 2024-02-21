@@ -41,7 +41,7 @@ class NodeFactory {
 
         if (sortByDimension >= 0) {
             auto compare = [sortByDimension](const array<double, dimensions> &a, const array<double, dimensions> &b) {
-                return a[sortByDimension - 1] < b[sortByDimension - 1];
+                return a[sortByDimension] < b[sortByDimension];
             };
             sort(nodalCoordinatesArray.begin(), nodalCoordinatesArray.end(), compare);
         }
@@ -58,7 +58,7 @@ class NodeFactory {
                                     char* heapPosition, int sortByDimension, unsigned numberOfThreads) {
         if (sortByDimension  >= 0) {
             auto compare = [sortByDimension](const array<double, dimensions> &a, const array<double, dimensions> &b) {
-                return a[sortByDimension - 1] < b[sortByDimension - 1];
+                return a[sortByDimension] < b[sortByDimension];
             };
             coordinates.sort(compare); // Corrected sort call for std::list
         }

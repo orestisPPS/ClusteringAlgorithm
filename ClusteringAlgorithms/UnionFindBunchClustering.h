@@ -19,10 +19,6 @@ public:
         for (auto &node: this->_nodes)
             nodeToNeighboursMap[node] = list<Node<dimensions>*>();
         
-//        auto _neighbourJob = [&](const Node<dimensions> &i, const Node<dimensions> &j){
-//            this->_unionFind.unionSets(this->_nodeToId[this->_nodes[i]], this->_nodeToId[this->_nodes[j]]);
-//        };
-
         auto _neighbourJob = [&](Node<dimensions> *thisNode, Node<dimensions> *candidateNode){
             nodeToNeighboursMap[thisNode].push_back(candidateNode);
         };
