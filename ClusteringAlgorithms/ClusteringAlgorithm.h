@@ -45,8 +45,8 @@ protected:
                         auto &counter = candidateNodeCounter[candidateNode];
                         if (counter == i)
                             counter++;
-                        if (counter == dimensions && candidateNode != node && 
-                            node->squaredSumFrom(*candidateNode) <= radius * radius) {
+                        if (counter == dimensions && candidateNode != node &&
+                                node->sumOfSquaresFrom(*candidateNode) <= radius * radius) {
                             NeighbourJob();
                         }
                     }

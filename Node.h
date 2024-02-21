@@ -19,12 +19,12 @@ public:
         return _coordinates;
     }
     
-    constexpr double distanceTo(const Node<dimensions> &other) const {
-        return sqrt(_distanceToUnrolled(other));
+    constexpr double distanceFrom(const Node<dimensions> &other) const {
+        return sqrt(_sumOfSquaresFromUnrolled(other));
     }
 
-    constexpr double squaredSumFrom(const Node<dimensions> &other) const {
-        return _squaredSumFromUnrolled<dimensions>(other);
+    constexpr double sumOfSquaresFrom(const Node<dimensions> &other) const {
+        return _sumOfSquaresFromUnrolled<dimensions>(other);
     }
 
 private:
@@ -32,20 +32,10 @@ private:
     array<double, dimensions> _coordinates;
     
     template<unsigned iDimension>
-    constexpr double _distanceToUnrolled(const Node<dimensions> &other) const {
+    constexpr double _sumOfSquaresFromUnrolled(const Node<iDimension> &other) const {
         if constexpr (iDimension > 0) {
             double diff = _coordinates[iDimension - 1] - other._coordinates[iDimension - 1];
-            return diff * diff + _distanceToUnrolled<iDimension - 1>(other);
-        } else {
-            return 0;
-        }
-    }
-    
-    template<unsigned iDimension>
-    constexpr double _squaredSumFromUnrolled(const Node<dimensions> &other) const {
-        if constexpr (iDimension > 0) {
-            double diff = _coordinates[iDimension - 1] - other._coordinates[iDimension - 1];
-            return diff * diff + _squaredSumFromUnrolled<iDimension - 1>(other);
+            return diff * diff + _sumOfSquaresFromUnrolled<iDimension - 1>(other);
         } else {
             return 0;
         }

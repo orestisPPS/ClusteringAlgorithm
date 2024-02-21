@@ -5,17 +5,14 @@
 #ifndef ALTAIRINTERVIEW_NODECLOUD_H
 #define ALTAIRINTERVIEW_NODECLOUD_H
 
-#include <random>
-#include <algorithm>
-#include <list>
+
 #include <unordered_map>
 #include <map>
 #include <cmath>
 #include <mutex>
-#include "ThreadingOperations.h"
+#include "NodeFactory.h"
 #include "NodeCluster.h"
 #include "UnionFind.h"
-
 
 
 template <unsigned dimensions>
@@ -36,88 +33,25 @@ template<unsigned short dimensions, unsigned numberOfNodes>
 class NodeCloud {
 public:
     
-    explicit NodeCloud(array<double, dimensions> dimensionsLengths, unsigned availableThreads = 1) {
-        static_assert(dimensionsLengths.size() == dimensions, "Invalid number of dimension lengths");
-
+    explicit NodeCloud(array<double, dimensions> dimensionsLengths, unsigned availableThreads, int sortByDimension = -1) {
         // Allocate contiguous memory for the nodes
         _blockOfNodes = new char[sizeof(Node<dimensions>) * numberOfNodes];
-        
-
-        // Create distributions for each dimension
-        array<uniform_real_distribution<double>, dimensions> distributionsVector;
-        for (unsigned i = 0; i < dimensions; i++) {
-            distributionsVector[i] = uniform_real_distribution<double>(0, dimensionsLengths[i]);
-            _coordinateComponentToNodeMaps[i] = map<double, list<Node<dimensions>*>>();
-        }
-        array<array<double, dimensions>, numberOfNodes> nodalCoordinatesArray;
-        
-        // Node initialization job for parallel execution
-        auto coordinateInitializationJob = [&](unsigned start, unsigned end) {
-            random_device randomDevice;
-            mt19937 generator(randomDevice());
-            auto coords = array<double, dimensions>();
-            for (unsigned i = start; i < end; i++){
-                for (unsigned direction = 0; direction < dimensions; direction++){
-                    nodalCoordinatesArray[i][direction] = distributionsVector[direction](generator);
-                    coords[direction] = distributionsVector[direction](generator);
-                }
-                _nodes[i] = new(_blockOfNodes + i * sizeof(Node<dimensions>)) Node<dimensions>(std::move(coords));
-            }
-        };
-        ThreadingOperations<Node<dimensions>*>::executeParallelJob(coordinateInitializationJob, numberOfNodes, availableThreads);
-        
-        //Sort the coordinates based on the sum of the squares of their components
-//        sort(nodalCoordinatesArray.begin(), nodalCoordinatesArray.end(),
-//             [](const array<double, dimensions>& a, const array<double, dimensions>& b) {
-//                 return a[0] < b[0];
-//            });
-//
-//        //Create the nodes in the heap based on their proximity to the origin
-//        auto nodeCreationJob = [&](unsigned start, unsigned end) {
-//            for (unsigned i = start; i < end; i++)
-//                _nodes[i] = new(_blockOfNodes + i * sizeof(Node<dimensions>)) Node<dimensions>(std::move(nodalCoordinatesArray[i]));
-//        };
-//        ThreadingOperations<Node<dimensions>*>::executeParallelJob(nodeCreationJob, numberOfNodes, availableThreads);
-        
-        auto coordinateToNodeMapJob = [&](unsigned direction, unsigned direction2) {
-            for (unsigned i = 0; i < numberOfNodes; i++){
-                //_coordinateComponentToNodeMaps[direction][_nodes[i]->getCoordinatesVector()[direction]].push_back(_nodes[i]);
-                _coordinateComponentToNodeMaps[direction][nodalCoordinatesArray[i][direction]].push_back(_nodes[i]);
-                _nodeToId.insert({_nodes[i], i});
-            }
-        };
-        ThreadingOperations<Node<dimensions>*>::executeParallelJob(coordinateToNodeMapJob, dimensions, availableThreads == 1 ? 1 : dimensions);
-        
-        //cout << "NodeCloud created" << endl;
+        if (sortByDimension == -1)
+            _nodes = std::move(NodeFactory<dimensions>::createRandomVectors<numberOfNodes>(dimensionsLengths, _blockOfNodes, availableThreads));
+        else
+            _nodes = std::move(NodeFactory<dimensions>::createRandomVectors<numberOfNodes>(dimensionsLengths, _blockOfNodes, sortByDimension, availableThreads));
     }
     
-    explicit NodeCloud(array<array<double,dimensions> , numberOfNodes> nodalCoordinatesArray) {
+    explicit NodeCloud(list<array<double, dimensions>> coordinates, unsigned availableThreads) {
         // Allocate contiguous memory for the nodes
-        _blockOfNodes = new char[sizeof(Node<dimensions>) * numberOfNodes];
-        //Sort the coordinates based on the sum of the squares of their components
-        sort(nodalCoordinatesArray.begin(), nodalCoordinatesArray.end(),
-             [](const array<double, dimensions>& a, const array<double, dimensions>& b) {
-                 double sumA = 0;
-                 double sumB = 0;
-                 for (unsigned i = 0; i < dimensions; i++) {
-                     sumA += a[i] * a[i];
-                     sumB += b[i] * b[i];
-                 }
-                 return sumA < sumB;
-             });
-        for (unsigned i = 0; i < nodalCoordinatesArray.size(); i++){
-            _nodes[i] = new(_blockOfNodes + i * sizeof(Node<dimensions>)) Node<dimensions>(nodalCoordinatesArray[i]);
-            for (unsigned j = 0; j < dimensions; j++)
-                _coordinateComponentToNodeMaps[j][nodalCoordinatesArray[i][j]].push_back(_nodes[i]);
-        }
+        _blockOfNodes = new char[sizeof(Node<dimensions>) * coordinates.size()];
+        _nodes = std::move(NodeFactory<dimensions>::createVectorsFromList(coordinates, _blockOfNodes, availableThreads));
     }
     
     ~NodeCloud() {
-        // Deallocate the node objects
         for (unsigned i = 0; i < numberOfNodes; i++) {
             _nodes[i]->~Node();
         }
-        // Deallocate the block of nodes
         delete[] _blockOfNodes;
     }
     
@@ -231,14 +165,7 @@ private:
     char* _blockOfNodes; // Contiguous heap memory for Node objects
 
     array<Node<dimensions>*, numberOfNodes> _nodes; // Array of pointers to Node objects
-
     
-    unordered_map<Node<dimensions>*, unsigned> _nodeToId;
-    
-    mutex _mutex;
-    
-
-
 };
 
 
