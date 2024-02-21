@@ -7,6 +7,7 @@
 
 #include <stdexcept>
 #include <memory>
+#include <mutex>
 #include <thread>
 #include <vector>
 using namespace std;

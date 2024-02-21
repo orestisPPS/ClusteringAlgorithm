@@ -65,7 +65,7 @@ public:
             cout << "NodeCloud with " << numberOfNodes << " nodes and " << availableThreads << " threads created" << endl;
 
             start = chrono::high_resolution_clock::now();
-            auto clusters = nodeCloud.calculateClusters(1, availableThreads);
+            auto clusters = nodeCloud.findClusters(1, availableThreads);
             end = chrono::high_resolution_clock::now();
             //auto clusterTime = chrono::duration_cast<chrono::seconds>(end - start);
             auto clusterTime = chrono::duration_cast<chrono::duration<double>>(end - start);

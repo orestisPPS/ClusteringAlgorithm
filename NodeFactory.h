@@ -14,43 +14,18 @@
 
 using namespace std;
 
-template<unsigned dimensions>
+template<unsigned dimensions, unsigned numberOfNodes>
 class NodeFactory {
     
     public:
-
-    template<unsigned numberOfNodes> 
-    static array<Node<dimensions>*, dimensions> 
-    createRandomVectors(array<double, dimensions> dimensionsLengths, char* heapPosition, unsigned numberOfThreads = 1) {
-        
-        array<uniform_real_distribution<double>, dimensions> distributionsVector;
-        array<Node<dimensions>*, numberOfNodes> nodes;
-        for (unsigned i = 0; i < dimensions; i++)
-            distributionsVector[i] = uniform_real_distribution<double>(0, dimensionsLengths[i]);
-
-        auto coordinateInitializationJob = [&](unsigned start, unsigned end) {
-            random_device randomDevice;
-            mt19937 generator(randomDevice());
-            auto coords = array<double, dimensions>();
-            for (unsigned i = start; i < end; i++){
-                for (unsigned direction = 0; direction < dimensions; direction++){
-                    coords[direction] = distributionsVector[direction](generator);
-                }
-                nodes[i] = new(heapPosition + i * sizeof(Node<dimensions>)) Node<dimensions>(coords);
-            }
-        };
-        ThreadingOperations<double>::executeParallelJob(coordinateInitializationJob, numberOfNodes, numberOfThreads);
-        return nodes;
-    }
-
-    template<unsigned numberOfNodes>
-    static array<Node<dimensions>*, dimensions>
-    createRandomVectors(array<double, dimensions> dimensionsLengths, char* heapPosition, int sortByDimension, unsigned numberOfThreads = 1) {
+    
+    static void
+    createRandomNodes(array<double, dimensions> dimensionsLengths, array<Node<dimensions>*, numberOfNodes>& nodes,
+                        char* heapPosition, int sortByDimension, unsigned numberOfThreads) {
 
         static_assert(sortByDimension < dimensions , "sortByDimension must be less than the number of dimensions");
 
         array<uniform_real_distribution<double>, dimensions> distributionsVector;
-        array<Node<dimensions>*, numberOfNodes> nodes;
         array<array<double, dimensions>, numberOfNodes> nodalCoordinatesArray;
         for (unsigned i = 0; i < dimensions; i++)
             distributionsVector[i] = uniform_real_distribution<double>(0, dimensionsLengths[i]);
@@ -66,32 +41,36 @@ class NodeFactory {
         };
         ThreadingOperations<double>::executeParallelJob(coordinateInitializationJob, numberOfNodes, numberOfThreads);
 
-        auto compare = [sortByDimension](const array<double, dimensions> &a, const array<double, dimensions> &b) {
-            return a[sortByDimension] < b[sortByDimension];
-        };
-        sort(nodes.begin(), nodes.end(), compare);
-        
-        auto coordinateInitializationJob2 = [&](unsigned start, unsigned end) {
-            for (unsigned i = start; i < end; i++)
-                nodes[i] = new(heapPosition + i * sizeof(Node<dimensions>)) Node<dimensions>(nodalCoordinatesArray[i]);
-        };
-        ThreadingOperations<double>::executeParallelJob(coordinateInitializationJob2, numberOfNodes, numberOfThreads);
-        return nodes;
-    }
-
-    static array<double, dimensions> createVectorFromInput(const list<array<double, dimensions>> &inputList,
-                                                           int sortByDimension = -1, unsigned numberOfThreads = 1) {
-        
-        array<array<double, dimensions>, inputList.size()> nodalCoordinatesArray;
-        copy(inputList.begin(), inputList.end(), nodalCoordinatesArray.begin());
-        
         if (sortByDimension >= 0) {
             auto compare = [sortByDimension](const array<double, dimensions> &a, const array<double, dimensions> &b) {
                 return a[sortByDimension] < b[sortByDimension];
             };
             sort(nodalCoordinatesArray.begin(), nodalCoordinatesArray.end(), compare);
         }
-        return nodalCoordinatesArray;
+        
+        auto nodeInitializationJob = [&](unsigned start, unsigned end) {
+            for (unsigned i = start; i < end; i++)
+                nodes[i] = new(heapPosition + i * sizeof(Node<dimensions>)) Node<dimensions>(std::move(nodalCoordinatesArray[i]));
+        };
+        ThreadingOperations<double>::executeParallelJob(nodeInitializationJob, numberOfNodes, numberOfThreads);
+        return std::move(nodes);
+    }
+
+    static void
+    createNodesFromInputCoordinates(list<array<double, dimensions>> coordinates, array<Node<dimensions>*, numberOfNodes>& nodes,
+                                    char* heapPosition, int sortByDimension, unsigned numberOfThreads) {
+        if (sortByDimension  >= 0) {
+            auto compare = [sortByDimension](const array<double, dimensions> &a, const array<double, dimensions> &b) {
+                return a[sortByDimension] < b[sortByDimension];
+            };
+            coordinates.sort(compare); // Corrected sort call for std::list
+        }
+
+        auto i = 0;
+        for (auto &coordinate : coordinates) {
+            nodes[i] = new(heapPosition + i * sizeof(Node<dimensions>)) Node<dimensions>(std::move(coordinate));
+            i++;
+        }
     }
     
 private:

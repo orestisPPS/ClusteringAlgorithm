@@ -35,18 +35,18 @@ public:
     void run() override{
         _consoleTestStart();
         // Create a list of coordinates with a triangle with 2 sides of equal length
-        array<array<double, 2>, 3> coordinates = {{
+        list<array<double, 2>> coordinates = {{
             {0, 0},
             {1, 0},
             {0, 1}
         }};
         // Create a NodeCloud from the list of coordinates
-        auto clusters = NodeCloud<2,3>(coordinates).calculateClusters(1, 1);
+        auto clusters = NodeCloud<2,3>(coordinates, 1).findClusters(1, UNION_FIND_BUNCH);
         if (clusters.size() == 1 && clusters.front().getNodes().size() == 3){
             _passed = true;
         }
-        cout << "Expected number of clusters: 1" << " Calculated number of clusters: " << clusters.size() << endl;
-        cout << "Expected number of nodes in the cluster: 3" << " Calculated number of nodes in the cluster: " << clusters.front().getNodes().size() << endl;
+        cout << "Expected clusters: 1" << " Calculated clusters: " << clusters.size() << endl;
+        cout << "Expected clusters: 3" << " Calculated clusters: " << clusters.front().getNodes().size() << endl;
         _consoleTestEnd();
         for (auto &cluster : clusters) {
             //cluster->printCluster();

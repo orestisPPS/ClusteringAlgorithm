@@ -122,7 +122,7 @@ private:
      * @return True if the number of clusters is as expected, false otherwise.
      */
     static bool _checkEdgeCaseClusterSize(NodeCloud<dimensions, numberOfNodes> &nodeCloud, double radius, unsigned expectedSize) {
-        auto clusters = nodeCloud.calculateClusters(radius, 1);
+        auto clusters = nodeCloud.findClusters(radius, 1);
         bool accepted = true;
         if (clusters.size() != expectedSize) {
             accepted = false;

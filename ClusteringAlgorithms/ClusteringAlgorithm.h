@@ -5,30 +5,35 @@
 #ifndef ALTAIRINTERVIEW_CLUSTERINGALGORITHM_H
 #define ALTAIRINTERVIEW_CLUSTERINGALGORITHM_H
 
-#include "../NodeCloud.h"
+#include "../NodeCluster.h"
+#include "../ThreadingOperations.h"
+#include "../UnionFind.h"
+#include <map>
+
+#include <unordered_map>
 
 enum ClusteringAlgorithmType {
-    UnionFindClustering,
-    DepthFirstSearchClustering
+    UNION_FIND_PER_NODE,
+    UNION_FIND_BUNCH,
+    DEPTH_FIRST_SEARCH
 };
 
 template<unsigned dimensions, unsigned numberOfNodes>
 class ClusteringAlgorithm {
 public:
-    ~ClusteringAlgorithm() = default;
-
-    ClusteringAlgorithmType type;
-
-
+    
+    virtual list<NodeCluster<dimensions>> findClusters(double radius, unsigned availableThreads) = 0;
+    
 
 protected:
-    explicit ClusteringAlgorithm(const array<Node<dimensions>*, numberOfNodes> &nodes) : _nodes(nodes) , type() {}
+    explicit ClusteringAlgorithm(const array<Node<dimensions>*, numberOfNodes> &nodes) : _nodes(nodes){}
+
+    ~ClusteringAlgorithm() = default;
     
     const array<Node<dimensions>*, numberOfNodes>& _nodes;
 
     array<map<double, list<Node<dimensions>*>>, dimensions> _coordinateComponentToNodeMaps;
 
-    
     template<typename NeighbourJob>
     void _findNeighboursWithMapBounds(Node<dimensions> *node, double radius, NeighbourJob neighbourJob) {
 
@@ -47,7 +52,8 @@ protected:
                             counter++;
                         if (counter == dimensions && candidateNode != node &&
                                 node->sumOfSquaresFrom(*candidateNode) <= radius * radius) {
-                            NeighbourJob();
+                            auto candidatePtr = candidateNode;
+                            neighbourJob(node, candidatePtr);
                         }
                     }
                     if (candidateNodeCounter.find(candidateNode) == candidateNodeCounter.end() && i == 0)

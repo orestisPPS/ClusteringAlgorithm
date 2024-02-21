@@ -14,6 +14,9 @@ class Node {
 public:
 
     explicit Node(array<double, dimensions> coordinates) : _coordinates(std::move(coordinates)){}
+    
+    //Move constructor
+    Node(Node &&other) noexcept : _coordinates(std::move(other._coordinates)) {}
 
     constexpr const array<double, dimensions>& getCoordinatesVector() const {
         return _coordinates;
@@ -32,7 +35,7 @@ private:
     array<double, dimensions> _coordinates;
     
     template<unsigned iDimension>
-    constexpr double _sumOfSquaresFromUnrolled(const Node<iDimension> &other) const {
+    constexpr double _sumOfSquaresFromUnrolled(const Node<dimensions> &other) const {
         if constexpr (iDimension > 0) {
             double diff = _coordinates[iDimension - 1] - other._coordinates[iDimension - 1];
             return diff * diff + _sumOfSquaresFromUnrolled<iDimension - 1>(other);

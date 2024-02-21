@@ -25,11 +25,11 @@ public:
         _consoleTestStart();
 
         // Create a list of coordinates corresponding to the points of the assigned task's example
-        array<array<double, 2>, 5> coordinates = {{
+        list<array<double, 2>> coordinates = {{
             {3.2, 5},
             {11.4, 5},
             {0, 5},
-            {3.2,0},
+            {3.2, 0},
             {12.8, 5}
         }};
 
@@ -42,12 +42,13 @@ public:
 
         // Calculate the clusters of the NodeCloud for each length scale
         for (auto lengthScale : lengthScales) {
-            auto cluster = NodeCloud<2,5>(coordinates).calculateClusters(lengthScale, 1);
-            _passed = cluster.size() == expectedClusters.front();
-            cout << "Length Scale : " << lengthScale << " Calculated Cluster size : " << cluster.size() 
+            auto clusters = NodeCloud<2,3>(coordinates, 1).findClusters(lengthScale, UNION_FIND_BUNCH);
+
+            _passed = clusters.size() == expectedClusters.front();
+            cout << "Length Scale : " << lengthScale << " Calculated Cluster size : " << clusters.size() 
                  << " Expected Cluster size : " << expectedClusters.front() << endl;
             expectedClusters.pop_front();
-            for (auto& object : cluster) {
+            for (auto& object : clusters) {
                 //object->printCluster();
             }
         }

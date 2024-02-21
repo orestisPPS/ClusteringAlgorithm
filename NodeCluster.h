@@ -32,6 +32,16 @@ public:
         other._nodes = nullptr;
     }
 
+    NodeCluster& operator=(NodeCluster&& other) noexcept {
+        if (this != &other) {
+            delete _nodes;
+            _id = other._id;
+            _nodes = other._nodes;
+            other._nodes = nullptr;
+        }
+        return *this;
+    }
+
 
     /**
      * @brief Gets the list of nodes in the cluster.

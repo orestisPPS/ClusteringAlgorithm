@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_executable(altairInterview main.cpp
         Node.h
-        NodeCloud.cpp
         NodeCloud.h
         ThreadingOperations.h
         Tests/Test.cpp
@@ -15,8 +14,10 @@ add_executable(altairInterview main.cpp
         NodeCluster.h
         Tests/RandomDomainND.h
         Tests/MultithreadingTest.h
-        Tests/TemplateNodeCreationTest.h
         UnionFind.h
         ClusteringAlgorithms/ClusteringAlgorithm.h
         NodeFactory.h
+        ClusteringAlgorithms/UnionFindBunchClustering.h
+        ClusteringAlgorithms/UnionFindClustering.h
+        ClusteringAlgorithms/UnionFindPerNodeClustering.h
 )
