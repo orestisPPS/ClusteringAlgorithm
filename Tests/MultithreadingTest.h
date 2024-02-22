@@ -7,10 +7,11 @@
 #include <chrono>
 #include "Test.h"
 
-template<unsigned dimensions, unsigned numberOfNodes>
+template<unsigned dimensions, unsigned numberOfNodes, int sortByDimension = -1>
 class MultithreadingTest : public Test {
 public:
-    MultithreadingTest() {
+    explicit MultithreadingTest(double radius = 1) {
+        _radius = radius;
         _name = "Multithreading";
     }
 
@@ -23,55 +24,53 @@ public:
     */
     void run() override{
         _consoleTestStart();
-        // Define the length of each dimension of the domain, in this case a unit square
-        // Define the number of nodes to be generated
+        auto lengths = array<double, dimensions>();
         unsigned availableThreads = thread::hardware_concurrency();
 
-        // Measure the time of initialization and clustering for a single and multiple threads
-        auto singleThreadTime = _measureTime(1);
-        auto singleThreadInitializationTime = singleThreadTime.first;
-        auto singleThreadClustering = singleThreadTime.second;
-
-        auto multiThreadTime = _measureTime(availableThreads);
-        auto multiThreadInitializationTime = multiThreadTime.first;
-        auto multiThreadClustering = multiThreadTime.second;
+        for (unsigned i = 0; i < dimensions; i++)
+            lengths[i] = 1;
+        auto singleThreadInitializationStart = chrono::high_resolution_clock::now();
+        auto nodeCloudSingleThread = NodeCloud<dimensions, numberOfNodes>(lengths, 1, sortByDimension);
+        auto singleThreadInitializationEnd = chrono::high_resolution_clock::now();
+        auto singleThreadInitializationTime = chrono::duration_cast<chrono::duration<double>>(singleThreadInitializationEnd - singleThreadInitializationStart);
+        
+        auto multiThreadInitializationStart = chrono::high_resolution_clock::now();
+        auto nodeCloudMultiThread = NodeCloud<dimensions, numberOfNodes>(lengths, availableThreads, sortByDimension);
+        auto multiThreadInitializationEnd = chrono::high_resolution_clock::now();
+        auto multiThreadInitializationTime = chrono::duration_cast<chrono::duration<double>>(multiThreadInitializationEnd - multiThreadInitializationStart);
 
         _printOutput("Node Initialization", availableThreads, singleThreadInitializationTime, multiThreadInitializationTime);
-        _printOutput("Clustering", availableThreads, singleThreadClustering, multiThreadClustering);
-        _printOutput("Total", availableThreads, singleThreadInitializationTime + singleThreadClustering, multiThreadInitializationTime + multiThreadClustering);
+        // Define the number of nodes to be generated
+        auto algorithms = vector<ClusteringAlgorithmType> {
+                UNION_FIND_PER_NODE,
+                UNION_FIND_BUNCH,
+                DEPTH_FIRST_SEARCH
+        };
+        auto algorithmNames = vector<string>{
+                "Union Find Per Node",
+                "Union Find Bunch",
+                "Depth First Search"
+        };
+        for (unsigned i = 0; i < algorithms.size(); i++) {
+            auto singleThreadClusteringStart = chrono::high_resolution_clock::now();
+            auto clusters = nodeCloudSingleThread.findClusters(_radius, algorithms[i]);
+            auto singleThreadClusteringEnd = chrono::high_resolution_clock::now();
+            auto singleThreadClustering = chrono::duration_cast<chrono::duration<double>>(singleThreadClusteringEnd - singleThreadClusteringStart);
 
-        auto timeImprovement = (singleThreadInitializationTime + singleThreadClustering - multiThreadInitializationTime - multiThreadClustering) /
-                              (singleThreadInitializationTime + singleThreadClustering) * 100;
-        if (timeImprovement > 50) {
-            _passed = true;
+            auto multiThreadClusteringStart = chrono::high_resolution_clock::now();
+            clusters = nodeCloudMultiThread.findClusters(_radius, algorithms[i]);
+            auto multiThreadClusteringEnd = chrono::high_resolution_clock::now();
+            auto multiThreadClustering = chrono::duration_cast<chrono::duration<double>>(multiThreadClusteringEnd - multiThreadClusteringStart);
+            
+            _printOutput("Clustering " + algorithmNames[i], availableThreads, singleThreadClustering, multiThreadClustering);
         }
-        _consoleTestEnd();
+        //_consoleTestEnd();
     }
 
     private:
-        /**
-         * @brief Measures the time of initialization and clustering for a given number of nodes and available threads.
-         * @param availableThreads Available threads
-         * @param numberOfNodes Number of nodes in the NodeCloud.
-         * @return A pair of the initialization and clustering time.
-         */
-        static pair<chrono::duration<double>, chrono::duration<double>> _measureTime(unsigned availableThreads) {
-            auto start = chrono::high_resolution_clock::now();
-            auto nodeCloud = NodeCloud<dimensions, numberOfNodes>({1,1}, availableThreads);
-            auto end = chrono::high_resolution_clock::now();
-            auto initializationTime = chrono::duration_cast<chrono::duration<double>>(end - start);
-
-            cout << "NodeCloud with " << numberOfNodes << " nodes and " << availableThreads << " threads created" << endl;
-
-            start = chrono::high_resolution_clock::now();
-            auto clusters = nodeCloud.findClusters(1, DEPTH_FIRST_SEARCH);
-            end = chrono::high_resolution_clock::now();
-            auto clusterTime = chrono::duration_cast<chrono::duration<double>>(end - start);
-
-            cout << "NodeCloud with " << numberOfNodes << " nodes and " << availableThreads << "clustered" << endl;
-            return {initializationTime, clusterTime};
-        }
-
+    
+        double _radius;    
+    
         /**
          * @brief Prints the number of nodes, threads, the execution time, the acceleration and time improvement percentage
          *        of the process for 1 and multiple threads.

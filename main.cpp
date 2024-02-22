@@ -10,7 +10,7 @@ int main() {
     ProofOfConceptTest().run();
     AltairExample().run();
     RandomDomainND<2,10>().run();
-    MultithreadingTest<2,10000>().run();
+    MultithreadingTest<2,10000, 0>(0.2).run();
     //TemplateNodeCreationTest().run();
     return 0;
 }

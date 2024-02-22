@@ -48,7 +48,7 @@ public:
             _name = "Random Domain " + to_string(_dimensions) + "D " + algorithmNames[i];
             _consoleTestStart();
             // Create a NodeCloud with random nodes
-            auto nodeCloud = NodeCloud<dimensions, numberOfNodes>(domainLengths, 1);
+            auto nodeCloud = NodeCloud<dimensions, numberOfNodes>(domainLengths, 1, 0);
             _passed = true;
             if (!_checkNodeVectorSize(nodeCloud, numberOfNodes))
                 _passed = false;

@@ -47,7 +47,7 @@ public:
 protected:
     
     void _neighbourJob(Node<dimensions> *thisNode, Node<dimensions> *candidateNode) override {
-        //this->_nodeToNeighboursMap[thisNode].push_back(candidateNode);
+        std::lock_guard<std::mutex> lock(this->_unionFindMutex);
         this->_unionFind.unionSets(this->_nodeToId[thisNode], this->_nodeToId[candidateNode]);
 
     }
