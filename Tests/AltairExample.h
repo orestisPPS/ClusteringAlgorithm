@@ -22,7 +22,6 @@ public:
     *  @note Passes if the number of clusters for each length scale is as expected and fails otherwise.
     */
     void run() override{
-        _consoleTestStart();
 
         // Create a list of coordinates corresponding to the points of the assigned task's example
         list<array<double, 2>> coordinates = {{
@@ -35,24 +34,36 @@ public:
 
         // Create a NodeCloud from the list of coordinates
 
-        //Create a list of the example's length scales to calculate the clusters 
-        auto lengthScales = list<double>{0.7, 1.8, 4.8, 6.5, 10.6};
-        //Create a list of the expected cluster sizes
-        auto expectedClusters = list<unsigned>{5, 4, 3, 2, 1};
-        _passed = true;
-        // Calculate the clusters of the NodeCloud for each length scale
-        for (auto lengthScale : lengthScales) {
-            auto cloud = NodeCloud<2, 5>(coordinates, 1);
-            auto clusters = cloud.findClusters(lengthScale, UNION_FIND_PER_NODE);
-            
-            if (clusters.size() != expectedClusters.front()){
-                _passed = false;
+        auto algorithms = vector<ClusteringAlgorithmType> {
+                UNION_FIND_PER_NODE,
+                UNION_FIND_BUNCH,
+                DEPTH_FIRST_SEARCH
+        };
+        auto algorithmNames = vector<string>{
+                "Union Find Per Node",
+                "Union Find Bunch",
+                "Depth First Search"
+        };
+        
+        for (unsigned i = 0 ; i < algorithms.size(); i++) {
+            //Create a list of the example's length scales to calculate the clusters 
+            auto lengthScales = vector<double>{0.7, 1.8, 4.8, 6.5, 10.6};
+            //Create a list of the expected cluster sizes
+            auto expectedClusters = vector<unsigned>{5, 4, 3, 2, 1};
+            _name = "Altair Example " + algorithmNames[i];
+            _consoleTestStart();
+            _passed = true;
+            for (unsigned j = 0; j < lengthScales.size(); j++) {
+                auto clusters = NodeCloud<2, 5>(coordinates, 1).findClusters(lengthScales[j], algorithms[i]);
+                if (clusters.size() != expectedClusters[j]) {
+                    _passed = false;
+                }
+                cout << "Length Scale " << lengthScales[j] << " : Clusters [Expected / Calculated] : [" << expectedClusters[j] << " / " << clusters.size() << "]" << endl;
             }
-            cout << "Length Scale : " << lengthScale << " Calculated Cluster size : " << clusters.size() 
-                 << " Expected Cluster size : " << expectedClusters.front() << endl;
-            expectedClusters.pop_front();
+            _consoleTestEnd();
         }
-        _consoleTestEnd();
+        // Calculate the clusters of the NodeCloud for each length scale
+        
 
     }
 };

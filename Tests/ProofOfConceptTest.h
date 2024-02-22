@@ -11,7 +11,7 @@
 class ProofOfConceptTest : public Test {
 public:
     ProofOfConceptTest() {
-        _name = "Proof Of Concept";
+        _name = "Proof of Concept";
     }
 
     /**
@@ -33,24 +33,37 @@ public:
      *        of 3 nodes. Fails otherwise.
      */
     void run() override{
-        _consoleTestStart();
         // Create a list of coordinates with a triangle with 2 sides of equal length
         list<array<double, 2>> coordinates = {{
             {0, 0},
             {1, 0},
             {0, 1}
         }};
-        // Create a NodeCloud from the list of coordinates
-        auto clusters = NodeCloud<2, 3>(coordinates, 1).findClusters(1, UNION_FIND_PER_NODE);
-        if (clusters.size() == 1 && clusters.front().items.size() == 3){
-            _passed = true;
+        auto algorithms = list<ClusteringAlgorithmType>{
+            UNION_FIND_PER_NODE,
+            UNION_FIND_BUNCH,
+            DEPTH_FIRST_SEARCH
+        };
+        auto algorithmNames = list<string>{
+            "Union Find Per Node",
+            "Union Find Bunch",
+            "Depth First Search"
+        };
+        
+        for (auto algorithm : algorithms) {
+            _name = "Proof of concept " + algorithmNames.front();
+            _consoleTestStart();
+            // Create a NodeCloud from the list of coordinates
+            auto clusters = NodeCloud<2, 3>(coordinates, 1).findClusters(1, algorithm);
+            if (clusters.size() == 1 && clusters.front().items.size() == 3)
+                _passed = true;
+            cout << "Clusters [Expected / Calculated] : [1 / " << clusters.size() << "]" << endl;
+            cout << "Cluster size [Expected / Calculated] : [3 / " << clusters.front().items.size() << "]" << endl;
+            
+            _consoleTestEnd();
+            algorithmNames.pop_front();
         }
-        cout << "Expected clusters: 1" << " Calculated clusters: " << clusters.size() << endl;
-        cout << "Expected clusters: 3" << " Calculated clusters: " << clusters.front().items.size() << endl;
-        _consoleTestEnd();
-        for (auto &cluster : clusters) {
-            //cluster->printCluster();
-        }
+
     }
 };
 

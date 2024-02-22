@@ -12,23 +12,16 @@ class UnionFindBunchClustering : public UnionFindClustering<dimensions, numberOf
 public:
     explicit UnionFindBunchClustering(const array<Node<dimensions>*, numberOfNodes> &nodes) :
              UnionFindClustering<dimensions, numberOfNodes>(nodes) {
+        this->_nodeToNeighboursMap = unordered_map<Node<dimensions>*, list<Node<dimensions>*>>();
         for (unsigned i = 0; i < numberOfNodes; i++) {
             this->_nodeToNeighboursMap[this->_nodes[i]] = list<Node<dimensions>*>();
-            this->_nodeToId[this->_nodes[i]] = i;
-            auto coords = this->_nodes[i]->getCoordinatesVector();
-            for (unsigned dimension = 0; dimension < dimensions; dimension++)
-                this->_coordinateComponentToNodeMaps[dimension][coords[dimension]].push_back(this->_nodes[i]);
         }
     }
     
     ~UnionFindBunchClustering() = default;
     
     list<Cluster<Node<dimensions> *>> findClusters(double radius, unsigned availableThreads) override {
-
-
-        auto nodeToClusterMap = unordered_map<Node<dimensions>*, list<Node<dimensions>*>>(numberOfNodes);
-        for (auto &node: this->_nodes)
-            nodeToClusterMap[node] = list<Node<dimensions>*>();
+        
 
         auto threadJob = [&](unsigned start, unsigned end){
             for (unsigned i = start; i < end; i++)
@@ -42,26 +35,25 @@ public:
                 this->_unionFind.unionSets(this->_nodeToId[thisNode], this->_nodeToId[candidateNode]);
             }
         }
-        
+
         for (auto &node : this->_nodes) {
             auto root = this->_nodes[this->_unionFind.find(this->_nodeToId[node])];
-            if (nodeToClusterMap.find(root) == nodeToClusterMap.end()) {
-                auto newCluster = list<Node<dimensions>*>();
-                nodeToClusterMap.insert({root, newCluster});
+            // Check if the root belongs to a cluster. If not, create a new cluster
+            if (this->_rootToClusterMap.find(root) == this->_rootToClusterMap.end()) {
+                auto newCluster = Cluster<Node<dimensions>*>();
+                this->_rootToClusterMap[root] = std::move(newCluster);
             }
-            nodeToClusterMap[root].push_back(node);
+            this->_rootToClusterMap[root].items.push_back(node);
         }
-        
-
         auto clusters = list<Cluster<Node<dimensions>*>>();
-        for (auto &pair : nodeToClusterMap) {
-            auto cluster = Cluster<Node<dimensions>*>();
-            cluster.items = std::move(pair.second);
-            clusters.push_back(std::move(cluster));
+        for (auto &pair : this->_rootToClusterMap) {
+            clusters.push_back(std::move(pair.second));
         }
+        this->_rootToClusterMap.clear();
         for (auto &node : this->_nodes){
             this->_nodeToNeighboursMap[node].clear();
         }
+        this->_rootToClusterMap.clear();
         return clusters;
     }
     
