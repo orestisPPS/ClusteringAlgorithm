@@ -11,6 +11,7 @@ int main() {
     AltairExample().run();
     RandomDomainND<2,10>().run();
     MultithreadingTest<2,10000, 0>(0.2).run();
+    cout << "The tests have finished running." << endl;
     //TemplateNodeCreationTest().run();
     return 0;
 }
