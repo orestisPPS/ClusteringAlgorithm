@@ -28,25 +28,38 @@ public:
      * @note Passes if all checks are successful and fails otherwise.
      */
     void run() override{
-        _consoleTestStart();
+
         // Define the length of each dimension of the domain, in this case a unit square
 
         auto domainLengths = array<double, dimensions>();
         for (unsigned i = 0; i < dimensions; i++)
             domainLengths[i] = 1;
-        
-        // Create a NodeCloud with random nodes
-        auto nodeCloud = NodeCloud<dimensions, numberOfNodes>(domainLengths, 1);
-        _passed = true;
-        if (!_checkNodeVectorSize(nodeCloud, numberOfNodes))
-            _passed = false;
-        if (!_checkNodesInDomain(nodeCloud, domainLengths))
-            _passed = false;
-        if (!_checkEdgeCaseClusterSize(nodeCloud, 1, 1))
-            _passed = false;
-        if (!_checkEdgeCaseClusterSize(nodeCloud, 0, numberOfNodes))
-            _passed = false;
-        _consoleTestEnd();
+        auto algortihms = vector<ClusteringAlgorithmType> {
+                UNION_FIND_PER_NODE,
+                UNION_FIND_BUNCH,
+                DEPTH_FIRST_SEARCH
+        };
+        auto algorithmNames = vector<string>{
+                "Union Find Per Node",
+                "Union Find Bunch",
+                "Depth First Search"
+        };
+        for (unsigned i = 0; i < algortihms.size(); i++) {
+            _name = "Random Domain " + to_string(_dimensions) + "D " + algorithmNames[i];
+            _consoleTestStart();
+            // Create a NodeCloud with random nodes
+            auto nodeCloud = NodeCloud<dimensions, numberOfNodes>(domainLengths, 1);
+            _passed = true;
+            if (!_checkNodeVectorSize(nodeCloud, numberOfNodes))
+                _passed = false;
+            if (!_checkNodesInDomain(nodeCloud, domainLengths))
+                _passed = false;
+            if (!_checkEdgeCaseClusterSize(nodeCloud, 1, 1, algortihms[i]))
+                _passed = false;
+            if (!_checkEdgeCaseClusterSize(nodeCloud, 0, numberOfNodes, algortihms[i]))
+                _passed = false;
+            _consoleTestEnd();
+        }
     }
 
 private:
@@ -68,7 +81,7 @@ private:
         if (nodeCloud.getNodes().size() != expectedSize) {
             _accepted = false;
         }
-        cout <<"Expected # of nodes: " << expectedSize << " Calculated # of nodes: " << nodeCloud.getNodes().size() << endl;
+        cout <<"Number of nodes [Expected / Calculated] : [" << expectedSize << " / " << nodeCloud.getNodes().size() << "]" << endl;
         return _accepted;
     }
     
@@ -101,14 +114,13 @@ private:
      * @param expectedSize Expected number of clusters.
      * @return True if the number of clusters is as expected, false otherwise.
      */
-    static bool _checkEdgeCaseClusterSize(NodeCloud<dimensions, numberOfNodes> &nodeCloud, double radius, unsigned expectedSize) {
-        auto clusters = nodeCloud.findClusters(radius, UNION_FIND_PER_NODE);
+    static bool _checkEdgeCaseClusterSize(NodeCloud<dimensions, numberOfNodes> &nodeCloud, double radius, unsigned expectedSize, ClusteringAlgorithmType algorithm) {
+        auto clusters = nodeCloud.findClusters(radius, algorithm);
         bool accepted = true;
         if (clusters.size() != expectedSize) {
             accepted = false;
         }
-        cout << "Length Scale : " << radius << " Calculated Cluster size : " << clusters.size() <<
-             " Expected Cluster size : " << expectedSize << endl;
+        cout << "Length Scale : " << radius << " : Clusters [Expected / Calculated] : [" << expectedSize << " / " << clusters.size() << "]" << endl;
         return accepted;
     }
 };

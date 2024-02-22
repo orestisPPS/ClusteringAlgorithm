@@ -22,7 +22,6 @@ public:
     
     list<Cluster<Node<dimensions> *>> findClusters(double radius, unsigned availableThreads) override {
         
-
         auto threadJob = [&](unsigned start, unsigned end){
             for (unsigned i = start; i < end; i++)
                 this->_findNeighboursWithMapBounds(this->_nodes[i], radius);
