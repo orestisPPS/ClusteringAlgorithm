@@ -12,6 +12,19 @@ class UnionFindPerNodeClustering : public UnionFindClustering<dimensions, number
 public:
     explicit UnionFindPerNodeClustering(const array<Node<dimensions>*, numberOfNodes> &nodes) :
              UnionFindClustering<dimensions, numberOfNodes>(nodes) {
+        
+        this->_nodeToNeighboursMap = unordered_map<Node<dimensions>*, list<Node<dimensions>*>>();
+        this->_nodeToId = unordered_map<Node<dimensions>*, unsigned>();
+        for (unsigned dimension = 0; dimension < dimensions; dimension++)
+            this->_coordinateComponentToNodeMaps[dimension] = map<double, list<Node<dimensions>*>>();
+        
+        for (unsigned i = 0; i < numberOfNodes; i++) {
+            this->_nodeToNeighboursMap[this->_nodes[i]] = list<Node<dimensions>*>();
+            this->_nodeToId[this->_nodes[i]] = i;
+            auto coords = this->_nodes[i]->getCoordinatesVector();
+            for (unsigned dimension = 0; dimension < dimensions; dimension++)
+                this->_coordinateComponentToNodeMaps[dimension][coords[dimension]].push_back(this->_nodes[i]);
+        }
     }
     
     ~UnionFindPerNodeClustering() = default;
@@ -20,47 +33,35 @@ public:
 
         auto threadJob = [&](unsigned start, unsigned end){
             for (unsigned i = start; i < end; i++){
-                //apply mutex to the union find
                 this->_findNeighboursWithMapBounds(this->_nodes[i], radius);
-                if (availableThreads > 1){
-                    std::lock_guard<std::mutex> lock(this->_unionFindMutex);
-                    for (auto &candidateNode : this->_nodeToNeighboursMap[this->_nodes[i]]) {
-                        this->_unionFind.unionSets(this->_nodeToId[this->_nodes[i]], this->_nodeToId[candidateNode]);
-                    }
-                }
-                else{
-                    for (auto &candidateNode : this->_nodeToNeighboursMap[this->_nodes[i]]) {
-                        this->_unionFind.unionSets(this->_nodeToId[this->_nodes[i]], this->_nodeToId[candidateNode]);
-                    }
-                }
             }
         };
         ThreadingOperations<void>::executeParallelJob(threadJob, numberOfNodes, availableThreads);
         
+        auto rootToClusterMap = unordered_map<Node<dimensions>*, Cluster<Node<dimensions>*>>(numberOfNodes);
+
         for (auto &node : this->_nodes) {
             auto root = this->_nodes[this->_unionFind.find(this->_nodeToId[node])];
-            if (this->_nodeToNeighboursMap.find(root) == this->_nodeToNeighboursMap.end()) {
-                auto newCluster = list<Node<dimensions>*>();
-                this->_nodeToNeighboursMap.insert({root, newCluster});
+            // Check if the root belongs to a cluster. If not, create a new cluster
+            if (rootToClusterMap.find(root) == rootToClusterMap.end()) {
+                auto newCluster = Cluster<Node<dimensions>*>();
+                rootToClusterMap[root] = std::move(newCluster);
             }
-            this->_nodeToNeighboursMap[root].push_back(node);      
+            rootToClusterMap[root].items.push_back(node);
         }
-
-        auto clusterId = 0;
-        auto clusters = list<Cluster<Node<dimensions> *>>();
-        for (auto &pair : this->_nodeToNeighboursMap) {
-            auto cluster = Cluster<Node<dimensions> *>(clusterId);
-            cluster.getList() = std::move(pair.second);
-            clusters.push_back(std::move(cluster));
-            clusterId++;
+        auto clusters = list<Cluster<Node<dimensions>*>>();
+        for (auto &pair : rootToClusterMap) {
+            clusters.push_back(std::move(pair.second));
         }
         return clusters;
+
     }
 
 protected:
+    
     void _neighbourJob(Node<dimensions> *thisNode, Node<dimensions> *candidateNode) override {
-        this->_nodeToNeighboursMap[thisNode].push_back(candidateNode);
-        //            this->_unionFind.unionSets(this->_nodeToId[thisNode], this->_nodeToId[candidateNode]);
+        //this->_nodeToNeighboursMap[thisNode].push_back(candidateNode);
+        this->_unionFind.unionSets(this->_nodeToId[thisNode], this->_nodeToId[candidateNode]);
 
     }
     

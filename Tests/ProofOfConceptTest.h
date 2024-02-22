@@ -41,12 +41,12 @@ public:
             {0, 1}
         }};
         // Create a NodeCloud from the list of coordinates
-        auto clusters = NodeCloud<2, 3>(coordinates, 1).findClusters(1, DEPTH_FIRST_SEARCH);
-        if (clusters.size() == 1 && clusters.front().getList().size() == 3){
+        auto clusters = NodeCloud<2, 3>(coordinates, 1).findClusters(1, UNION_FIND_PER_NODE);
+        if (clusters.size() == 1 && clusters.front().items.size() == 3){
             _passed = true;
         }
         cout << "Expected clusters: 1" << " Calculated clusters: " << clusters.size() << endl;
-        cout << "Expected clusters: 3" << " Calculated clusters: " << clusters.front().getList().size() << endl;
+        cout << "Expected clusters: 3" << " Calculated clusters: " << clusters.front().items.size() << endl;
         _consoleTestEnd();
         for (auto &cluster : clusters) {
             //cluster->printCluster();

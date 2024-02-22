@@ -12,6 +12,13 @@ class UnionFindBunchClustering : public UnionFindClustering<dimensions, numberOf
 public:
     explicit UnionFindBunchClustering(const array<Node<dimensions>*, numberOfNodes> &nodes) :
              UnionFindClustering<dimensions, numberOfNodes>(nodes) {
+        for (unsigned i = 0; i < numberOfNodes; i++) {
+            this->_nodeToNeighboursMap[this->_nodes[i]] = list<Node<dimensions>*>();
+            this->_nodeToId[this->_nodes[i]] = i;
+            auto coords = this->_nodes[i]->getCoordinatesVector();
+            for (unsigned dimension = 0; dimension < dimensions; dimension++)
+                this->_coordinateComponentToNodeMaps[dimension][coords[dimension]].push_back(this->_nodes[i]);
+        }
     }
     
     ~UnionFindBunchClustering() = default;
@@ -46,13 +53,11 @@ public:
         }
         
 
-        auto clusterId = 0;
         auto clusters = list<Cluster<Node<dimensions>*>>();
         for (auto &pair : nodeToClusterMap) {
-            auto cluster = Cluster<Node<dimensions>*>(clusterId);
-            cluster.getList() = std::move(pair.second);
+            auto cluster = Cluster<Node<dimensions>*>();
+            cluster.items = std::move(pair.second);
             clusters.push_back(std::move(cluster));
-            clusterId++;
         }
         for (auto &node : this->_nodes){
             this->_nodeToNeighboursMap[node].clear();

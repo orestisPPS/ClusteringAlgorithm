@@ -27,14 +27,12 @@ public:
         };
         ThreadingOperations<void>::executeParallelJob(threadJob, numberOfNodes, availableThreads);
         
-        auto clusterId = 0;
         auto clusters = list<Cluster<Node<dimensions> *>>();
         for (auto &node : this->_nodes){
             if (!_visitedStatus[node]){
-                auto cluster = Cluster<Node<dimensions> *>(clusterId);
+                auto cluster = Cluster<Node<dimensions> *>();
                 _depthFirstSearch(node, cluster);
                 clusters.push_back(std::move(cluster));
-                clusterId++;
             }
         }
         for (auto &node : this->_nodes){
@@ -50,7 +48,7 @@ private:
     
     void _depthFirstSearch(Node<dimensions> *node, Cluster<Node<dimensions> *> &cluster){
         _visitedStatus[node] = true;
-        cluster.getList().push_back(node);
+        cluster.items.push_back(node);
         for (auto &neighbour : this->_nodeToNeighboursMap[node]){
             if (!_visitedStatus[neighbour])
                 _depthFirstSearch(neighbour, cluster);
