@@ -13,10 +13,10 @@ template <unsigned dimensions>
 class Node {
 public:
 
-    explicit Node(array<double, dimensions> coordinates) : _coordinates(std::move(coordinates)){}
+    explicit Node(array<double, dimensions> coordinates) : _coordinates(coordinates){}
     
     //Move constructor
-    Node(Node &&other) noexcept : _coordinates(std::move(other._coordinates)) {}
+    Node(Node &&other) noexcept : _coordinates(other._coordinates) {}
 
     constexpr const array<double, dimensions>& getCoordinatesVector() const {
         return _coordinates;
